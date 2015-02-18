@@ -1,0 +1,56 @@
+/* compiler.css */
+/*
+body
+{
+	background-color: #909193;
+	background-image: url(images/background.jpg);
+	background-repeat: repeat-x;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	font-style: normal;
+}
+
+h1 
+{ 
+    color: black;
+	font-size:   20pt;
+	font-weight: normal;
+	font-style: normal;	
+    border-bottom: 1px solid #dad8ed;  
+}
+
+h2
+{
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+	font-size:   16pt;
+	font-weight: normal;
+	font-style: normal;	
+}
+*/
+h1{
+	font-weight: bold;
+	text-align: center;
+}
+#btnCompile{
+	width:200px;
+	text-align: center;
+}
+.output{
+	float:right;
+	margin:;
+
+}
+.source{
+	float:left;
+	display: inline-block;
+	width:100%;
+}
+#taSourceCode, #taOutput{
+	width:48%;
+	margin: 10px;
+	height:400px;
+}
+#taOutput{
+	float:right;
+}
