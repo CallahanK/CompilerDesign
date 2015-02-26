@@ -1,9 +1,6 @@
 /* token.ts */
 var Token = (function () {
-    function Token(kind, value, line) {
-        this.kind = kind;
-        this.value = value;
-        this.line = line;
+    function Token() {
     }
     return Token;
 })();
@@ -12,23 +9,23 @@ var Token = (function () {
 var R_EOF = new RegExp('^[$]');
 var R_LBRACE = new RegExp('^[{]');
 var R_RBRACE = new RegExp('^[}]');
-var R_LPAREN = new RegExp('^[(]');
-var R_RPAREN = new RegExp('^[)]');
+var R_LPAREN = new RegExp('^[\(]');
+var R_RPAREN = new RegExp('^[\)]');
 var R_QUOTE = new RegExp('^["]');
-var R_BOOLEQ = new RegExp('^[==]');
+var R_BOOLEQ = new RegExp('^==');
 var R_ASSIGN = new RegExp('^[=]');
-var R_NTBOOLEQ = new RegExp('^[!=]');
+var R_NTBOOLEQ = new RegExp('^!=');
 var R_INTOP = new RegExp('^[+]');
 var R_SPACE = new RegExp('^\\s');
 //Keywords
-var R_PRINT = new RegExp('^[print]');
-var R_WHILE = new RegExp('^[while]');
-var R_IF = new RegExp('^[int]');
-var R_INT = new RegExp('^[if]');
-var R_STRING = new RegExp('^[string]');
-var R_BOOLEAN = new RegExp('^[boolean]');
-var R_BOOLTRUE = new RegExp('^[true]');
-var R_BOOLFALSE = new RegExp('^[false]');
+var R_PRINT = new RegExp('^print');
+var R_WHILE = new RegExp('^while');
+var R_IF = new RegExp('^if');
+var R_INT = new RegExp('^int');
+var R_STRING = new RegExp('^string');
+var R_BOOLEAN = new RegExp('^boolean');
+var R_BOOLTRUE = new RegExp('^true');
+var R_BOOLFALSE = new RegExp('^false');
 var R_CHAR = new RegExp('^[a-z]');
 var R_DIGIT = new RegExp('^[0-9]');
 var R_NEWLINE = new RegExp('^[\n|\r]');
@@ -42,7 +39,7 @@ var TokenType = (function () {
 })();
 var tokentypes = [];
 //test
-tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1)); //[a-z]
+//tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1));     //[a-z]
 //Keywords
 tokentypes.push(new TokenType(R_PRINT, "T_PRINT", 5)); //print
 tokentypes.push(new TokenType(R_WHILE, "T_WHILE", 5)); //while

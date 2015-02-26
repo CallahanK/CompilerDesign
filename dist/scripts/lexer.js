@@ -12,7 +12,7 @@ var TSC;
                 var currentTokenType = matchToken(tmpSrc);
                 var currentLength = getTokenLength(currentTokenType);
                 var srcTokenizing = tmpSrc.substring(currentLength);
-                var currentToken = new Token(new TokenType(R_PRINT, "NULL", 1), "", 0);
+                var currentToken = new Token();
                 try {
                     console.log("null try");
                     var switcher = currentTokenType.name;
@@ -24,7 +24,7 @@ var TSC;
                     case 'T_NEWLINE':
                         currentLine++;
                         break;
-                    case 'T_Space':
+                    case 'T_SPACE':
                         if (inString) {
                             currentToken.kind = currentTokenType;
                             currentToken.line = currentLine;

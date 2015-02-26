@@ -17,7 +17,7 @@ module TSC {
 
                 var srcTokenizing = tmpSrc.substring(currentLength);
 
-                var currentToken = new Token(new TokenType(R_PRINT, "NULL", 1),"",0);
+                var currentToken = new Token();
                 
 
                 try {
@@ -33,7 +33,7 @@ module TSC {
                     case 'T_NEWLINE':
                         currentLine++;
                         break;
-                    case 'T_Space':
+                    case 'T_SPACE':
                         if(inString){
                             currentToken.kind = currentTokenType;
                             currentToken.line = currentLine;
