@@ -3,29 +3,31 @@
 module TSC {
     export class Parser {
         public static parse() {
-
+            
+            parseProgram(); 
             //Recurrsive Descent Parser
+            return parseError;
 
             function parseProgram(){
-                //TODO
                 parseBlock();
-                //match($);
+                match("$");
             }
 
             function parseBlock(){
                 //TODO
-                //match({);
+                match("{");
                 parseStatementList();
-                //match(});
+                match("}");
             }
 
             function parseStatementList(){
                 //TODO
                 //if(nextToken is statement){
+                if(false){
                     parseStatement();
-                //} else {
+                } else {
                     //epsilon production
-                //}
+                }
             }
 
             function parseStatement(){
@@ -169,15 +171,42 @@ module TSC {
             //Recurrsive Descent Parser End
 
 
-
-            function match(){
+            function match(tmpMatch: string) {
+                if (tmpMatch == "$") {
+                    eofReached = true;
+                }
                 //TODO
-                //if match true
-                //increament nextTokenIndex
+                putMessage("Expecting: " + tmpMatch);
+                putMessage("Found: " + nextToken().value);
+                if(tmpMatch == nextToken().value){
+                    putMessage("Successfully matched, token consumed");
+                    
+                } else {
+                    parseError = true;
+                    putMessage("Error on line " + nextToken().line + "found token " + nextToken().value);
+                }
+                //Consume token
+                nextTokenIndex++;
             }
 
-            function nextToken(){
-                var currentToken = tokenList[nextTokenIndex];
+            function nextToken() {
+                //EOF reached early
+                if (eofReached && nextTokenIndex < tokenList.length-1 ){
+                    //ADD error 
+                    var currentToken = tokenList[nextTokenIndex];
+                    nextTokenIndex = tokenList.length - 1
+                    //TEMP message
+                    putMessage("NextTokenIndex: " + nextTokenIndex);
+                    putMessage("tokenList.length: " + tokenList.length);
+                    putMessage("Parse Error: EOF marker reached with source code remaining");
+                }
+                if( nextTokenIndex < tokenList.length ){
+                    var currentToken = tokenList[nextTokenIndex];
+                }
+                //else if {
+
+                //}
+               
                 //TODO
                 //End of file check
                 //EOF token check

@@ -5,25 +5,27 @@ var TSC;
         function Parser() {
         }
         Parser.parse = function () {
+            parseProgram();
             //Recurrsive Descent Parser
+            return parseError;
             function parseProgram() {
-                //TODO
                 parseBlock();
-                //match($);
+                match("$");
             }
             function parseBlock() {
                 //TODO
-                //match({);
+                match("{");
                 parseStatementList();
-                //match(});
+                match("}");
             }
             function parseStatementList() {
                 //TODO
                 //if(nextToken is statement){
-                parseStatement();
-                //} else {
-                //epsilon production
-                //}
+                if (false) {
+                    parseStatement();
+                }
+                else {
+                }
             }
             function parseStatement() {
                 //TODO
@@ -144,13 +146,39 @@ var TSC;
                 //match(+);
             }
             //Recurrsive Descent Parser End
-            function match() {
+            function match(tmpMatch) {
+                if (tmpMatch == "$") {
+                    eofReached = true;
+                }
                 //TODO
-                //if match true
-                //increament nextTokenIndex
+                putMessage("Expecting: " + tmpMatch);
+                putMessage("Found: " + nextToken().value);
+                if (tmpMatch == nextToken().value) {
+                    putMessage("Successfully matched, token consumed");
+                }
+                else {
+                    parseError = true;
+                    putMessage("Error on line " + nextToken().line + "found token " + nextToken().value);
+                }
+                //Consume token
+                nextTokenIndex++;
             }
             function nextToken() {
-                var currentToken = tokenList[nextTokenIndex];
+                //EOF reached early
+                if (eofReached && nextTokenIndex < tokenList.length - 1) {
+                    //ADD error 
+                    var currentToken = tokenList[nextTokenIndex];
+                    nextTokenIndex = tokenList.length - 1;
+                    //TEMP message
+                    putMessage("NextTokenIndex: " + nextTokenIndex);
+                    putMessage("tokenList.length: " + tokenList.length);
+                    putMessage("Parse Error: EOF marker reached with source code remaining");
+                }
+                if (nextTokenIndex < tokenList.length) {
+                    var currentToken = tokenList[nextTokenIndex];
+                }
+                //else if {
+                //}
                 //TODO
                 //End of file check
                 //EOF token check

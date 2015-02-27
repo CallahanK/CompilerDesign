@@ -25,3 +25,5 @@ var _Parser = TSC.Parser;
 
 // Parser variables
     var nextTokenIndex = 0;  
+    var parseError = false;
+    var eofReached = false;

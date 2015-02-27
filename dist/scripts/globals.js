@@ -18,3 +18,5 @@ var lexErrors = [];
 var lexError = false;
 // Parser variables
 var nextTokenIndex = 0;
+var parseError = false;
+var eofReached = false;

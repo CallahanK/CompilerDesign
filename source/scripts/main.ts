@@ -11,6 +11,11 @@
         errorCount = 0;
         lexError = false;
         lexErrors = [];
+
+        //Parser var
+        nextTokenIndex = 0;
+        parseError = false;
+        eofReached = false;
     }
 
     function btnCompile_click() {        
@@ -35,8 +40,10 @@
                 putMessage(lexErrors[error]); 
             }
         }
-        // . . . and parse!
-        //parse();
+        if (!lexError) {
+            putMessage("Commencing Parse"); 
+            var test = _Parser.parse();
+        }
     }
 
     function putMessage(msg) {
