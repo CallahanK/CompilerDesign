@@ -38,7 +38,7 @@ function btnCompile_click() {
     }
     if (!lexError) {
         putMessage("Commencing Parse");
-        var test = _Parser.parse();
+        _Parser.parse();
     }
 }
 function putMessage(msg) {

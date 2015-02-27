@@ -42,7 +42,7 @@
         }
         if (!lexError) {
             putMessage("Commencing Parse"); 
-            var test = _Parser.parse();
+            _Parser.parse();
         }
     }
 

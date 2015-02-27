@@ -6,39 +6,62 @@ var TSC;
         }
         Parser.parse = function () {
             parseProgram();
-            //Recurrsive Descent Parser
-            return parseError;
+            //Recurrsive Descent Parser 
             function parseProgram() {
                 parseBlock();
-                match("$");
+                matchByValue("$");
             }
             function parseBlock() {
-                //TODO
-                match("{");
+                matchByValue("{");
                 parseStatementList();
-                match("}");
+                matchByValue("}");
             }
             function parseStatementList() {
                 //TODO
-                //if(nextToken is statement){
-                if (false) {
+                var tmpNextToken = nextToken().kind.name;
+                console.log("attempting parseStatement list");
+                if (tmpNextToken == 'T_PRINT' || tmpNextToken == 'T_WHILE' || tmpNextToken == 'T_IF' || tmpNextToken == 'T_LBRACE' || tmpNextToken == 'T_INT' || tmpNextToken == 'T_STRING' || tmpNextToken == 'T_BOOLEAN' || tmpNextToken == 'T_CHAR') {
+                    console.log("matched a statement");
                     parseStatement();
                 }
                 else {
                 }
             }
             function parseStatement() {
-                //TODO
+                var switcher = nextToken().value;
+                console.log("parseing statement");
+                switch (switcher) {
+                    case 'print':
+                        console.log("found a print");
+                        parsePrintStatement();
+                        break;
+                    case 'int':
+                    case 'string':
+                    case 'boolean':
+                        parseVarDecl();
+                        break;
+                    case 'while':
+                        parseWhileStatement();
+                        break;
+                    case 'if':
+                        parseIfStatement();
+                        break;
+                    case '{':
+                        parseBlock();
+                        break;
+                    default:
+                        parseAssignmentStatement();
+                }
             }
             function parsePrintStatement() {
-                //match('print');
-                //match('(');
+                matchByValue("print");
+                matchByValue("(");
                 parseExpr();
-                //match(')');
+                matchByValue(")");
             }
             function parseAssignmentStatement() {
                 parseId();
-                //match(=);
+                matchByValue("=");
                 parseExpr();
             }
             function parseVarDecl() {
@@ -46,107 +69,112 @@ var TSC;
                 parseId();
             }
             function parseWhileStatement() {
-                //match('while');
+                matchByValue("while");
                 parseBooleanExpr();
                 parseBlock();
             }
             function parseIfStatement() {
-                //match('if');
+                matchByValue("if");
                 parseBooleanExpr();
                 parseBlock();
             }
             function parseExpr() {
-                //if(nextToken is [0-9]){
-                parseDigit();
-                parseIntExpr();
-                //}
-                //else if(nextToken is "){
-                parseStringExpr();
-                //}
-                //else if(nextToken is ( ){
-                parseBooleanExpr();
-                //} else {
-                parseId();
-                //} 
+                if (nextToken().kind.name == 'T_DIGIT') {
+                    parseDigit();
+                    parseIntExpr();
+                }
+                else if (nextToken().value == '"') {
+                    parseStringExpr();
+                }
+                else if (nextToken().value == '(') {
+                    parseBooleanExpr();
+                }
+                else {
+                    parseId();
+                }
             }
             function parseIntExpr() {
                 parseDigit();
-                //if(nextToken is + ){
-                parseIntOp();
-                parseExpr();
-                //} else {
-                //epsilon production b/c already parsed the digit
-                //}
+                if (nextToken().value == "+") {
+                    parseIntOp();
+                    parseExpr();
+                }
+                else {
+                }
             }
             function parseStringExpr() {
-                //match(");
+                matchByValue('"');
                 parseCharList();
-                //match(");
+                matchByValue('"');
             }
             function parseBooleanExpr() {
-                //if(nextToken() is ( ){
-                //match('(');
-                parseExpr();
-                parseBoolOp();
-                parseExpr();
-                //match(')');
-                //} else {
-                parseBoolVal();
-                //}
+                if (nextToken().value == '(') {
+                    matchByValue('(');
+                    parseExpr();
+                    parseBoolOp();
+                    parseExpr();
+                    matchByValue(')');
+                }
+                else {
+                    parseBoolVal();
+                }
             }
             function parseId() {
                 parseChar();
             }
             function parseCharList() {
-                //if(nextToken() is alpha){
-                parseChar();
-                parseCharList();
-                //}
-                //else if(nextToken() is space){
-                parseSpace();
-                parseCharList();
-                //} else {
-                //epsilon production
-                //}
+                if (nextToken().kind.name == 'T_CHAR') {
+                    parseChar();
+                    parseCharList();
+                }
+                else if (nextToken().kind.name == 'T_SPACE') {
+                    parseSpace();
+                    parseCharList();
+                }
+                else {
+                }
             }
             function parseType() {
-                //if(nextToken() is int){
-                //match(int);
-                //}
-                //else if(nextToken() is string){
-                //match('string');
-                //} else {
-                //match('boolean');
-                //}
+                if (nextToken().value == 'int') {
+                    matchByValue("int");
+                }
+                else if (nextToken().value == 'string') {
+                    matchByValue('string');
+                }
+                else {
+                    matchByValue('boolean');
+                }
             }
             function parseChar() {
-                //match(char/alpha);
+                matchByType('T_CHAR');
             }
             function parseSpace() {
-                //match(space);
+                matchByValue(' ');
             }
             function parseDigit() {
-                //match(digit);
+                matchByType('T_DIGIT');
             }
             function parseBoolOp() {
-                //if (nextToken() is ==){
-                //match(==);
-                //} else {
-                //match(!=);
-                //}
+                if (nextToken().value == '==') {
+                    matchByValue('==');
+                }
+                else {
+                    matchByValue('!=');
+                }
             }
             function parseBoolVal() {
-                //if(nextToken() is false){
-                //match('false")
-                //} else {
-                //match('true');
-                //}
+                if (nextToken().value == 'false') {
+                    matchByValue('false');
+                }
+                else {
+                    matchByValue('true');
+                }
             }
             function parseIntOp() {
-                //match(+);
+                matchByValue('+');
             }
             //Recurrsive Descent Parser End
-            function match(tmpMatch) {
+            function matchByValue(tmpMatch) {
                 if (tmpMatch == "$") {
                     eofReached = true;
                 }
@@ -154,6 +182,23 @@ var TSC;
                 putMessage("Expecting: " + tmpMatch);
                 putMessage("Found: " + nextToken().value);
                 if (tmpMatch == nextToken().value) {
+                    putMessage("Successfully matched, token consumed");
+                }
+                else {
+                    parseError = true;
+                    putMessage("Error on line " + nextToken().line + "found token " + nextToken().value);
+                }
+                //Consume token
+                nextTokenIndex++;
+            }
+            function matchByType(tmpMatch) {
+                if (tmpMatch == "$") {
+                    eofReached = true;
+                }
+                //TODO
+                putMessage("Expecting: " + tmpMatch);
+                putMessage("Found: " + nextToken().value);
+                if (tmpMatch == nextToken().kind.name) {
                     putMessage("Successfully matched, token consumed");
                 }
                 else {
