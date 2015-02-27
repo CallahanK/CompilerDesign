@@ -18,12 +18,13 @@ var TSC;
                     var switcher = currentTokenType.name;
                 }
                 catch (tmpEr) {
+                    console.log("null catch");
                     var switcher = null;
                 }
                 switch (switcher) {
                     case 'T_NEWLINE':
                         currentLine++;
-                        break;
+                        console.log("NEW LINE");
                     case 'T_SPACE':
                         if (inString) {
                             currentToken.kind = currentTokenType;
@@ -39,7 +40,9 @@ var TSC;
                         //Lexing error
                         //Don't add token
                         //Continue to next token
-                        console.log("Null case: error");
+                        lexErrors.push("Unidentified symbol: " + tmpSrc.substring(0, currentLength) + " found on line:" + currentLine);
+                        errorCount++;
+                        lexError = true;
                         break;
                     case 'T_QUOTE':
                         //Toggle in string
@@ -56,7 +59,7 @@ var TSC;
                     return new Array(currentToken).concat(tokenize(srcTokenizing));
                 }
                 else {
-                    console.log("adding first token");
+                    console.log("adding last token");
                     return new Array(currentToken);
                 }
             }

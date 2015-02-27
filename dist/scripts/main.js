@@ -1,12 +1,14 @@
 /* main.ts */
 function init() {
-    // Clear the message box.
+    // Clear the message box. 
     document.getElementById("taOutput").value = "";
     // Set the initial values for our globals.
     tokenList = [];
     inString = false;
     currentLine = 1;
     errorCount = 0;
+    lexError = false;
+    lexErrors = [];
 }
 function btnCompile_click() {
     // This is executed as a result of the user pressing the 
@@ -19,8 +21,16 @@ function btnCompile_click() {
     sourceCode = document.getElementById("taSourceCode").value;
     putMessage("Src:" + sourceCode);
     tokenList = _Lexer.lex();
-    for (var token in tokenList) {
-        putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name);
+    if (!lexError) {
+        for (var token in tokenList) {
+            putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name + "  |  \'" + tokenList[token].value + "\'");
+        }
+    }
+    else {
+        putMessage("Lex ERROR, parse cancelled");
+        for (var error in lexErrors) {
+            putMessage(lexErrors[error]);
+        }
     }
     // . . . and parse!
     //parse();

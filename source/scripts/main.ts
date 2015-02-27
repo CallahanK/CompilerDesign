@@ -2,13 +2,15 @@
 
 
     function init() {
-        // Clear the message box.
+        // Clear the message box. 
         (<HTMLInputElement>document.getElementById("taOutput")).value = "";
         // Set the initial values for our globals.
         tokenList = [];
         inString = false;
         currentLine = 1;
         errorCount = 0;
+        lexError = false;
+        lexErrors = [];
     }
 
     function btnCompile_click() {        
@@ -22,9 +24,16 @@
         putMessage("Lexing Started");
         sourceCode = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
         putMessage("Src:" + sourceCode);
-        tokenList= _Lexer.lex();
-        for (var token in tokenList) {
-            putMessage( tokenList[token].line + "  |  " + tokenList[token].kind.name);
+        tokenList = _Lexer.lex();
+        if (!lexError) {
+            for (var token in tokenList) {
+                putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name + "  |  \'" + tokenList[token].value + "\'"); 
+            }
+        } else {
+            putMessage("Lex ERROR, parse cancelled");
+            for (var error in lexErrors) {
+                putMessage(lexErrors[error]); 
+            }
         }
         // . . . and parse!
         //parse();

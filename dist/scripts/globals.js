@@ -12,3 +12,6 @@ var tokenList = [];
 var inString = false;
 var currentLine = 1;
 var errorCount = 0;
+var lexErrors = [];
+//temp
+var lexError = false;

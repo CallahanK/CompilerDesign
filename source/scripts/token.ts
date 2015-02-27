@@ -44,7 +44,7 @@ var R_BOOLFALSE = new RegExp('^false');
 var R_CHAR = new RegExp('^[a-z]');
 var R_DIGIT = new RegExp('^[0-9]');
 
-var R_NEWLINE = new RegExp('^[\n|\r]');
+var R_NEWLINE = new RegExp('^[\\S\\n\\r]');
 
 class TokenType {
     regex: RegExp;
@@ -70,6 +70,12 @@ tokentypes.push(new TokenType(R_STRING, "T_STRING", 5));  //string
 tokentypes.push(new TokenType(R_BOOLEAN, "T_BOOLEAN", 7));  //boolean
 tokentypes.push(new TokenType(R_BOOLTRUE, "T_BOOLTRUE", 4));  //true
 tokentypes.push(new TokenType(R_BOOLFALSE, "T_BOOLFALSE", 5));  //false
+//Char | ID
+tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1));     //[a-z]
+
+//Digits
+tokentypes.push(new TokenType(R_DIGIT, "T_DIGIT", 1));    //[0-9]
+
 //Single Symbols
 tokentypes.push(new TokenType(R_EOF, "T_EOF", 1)); //$
 tokentypes.push(new TokenType(R_LBRACE, "T_LBRACE", 1));  //{
@@ -81,12 +87,14 @@ tokentypes.push(new TokenType(R_BOOLEQ, "T_BOOLEQ", 2));  //==
 tokentypes.push(new TokenType(R_ASSIGN, "T_ASSIGN", 1));  //=
 tokentypes.push(new TokenType(R_NTBOOLEQ, "T_NTBOOLEQ", 2));  //!=
 tokentypes.push(new TokenType(R_INTOP, "T_INTOP", 1));  //+
-tokentypes.push(new TokenType(R_SPACE, "T_SPACE", 1));  //' '
 
-tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1));     //[a-z]
-tokentypes.push(new TokenType(R_DIGIT, "T_DIGIT", 1));    //[0-9]
-    
+tokentypes.push(new TokenType(R_SPACE, "T_SPACE", 1));  //' '
 tokentypes.push(new TokenType(R_NEWLINE, "T_NEWLINE", 1)); // \n | \r
+
+
+
+    
+
 
 
 
@@ -96,12 +104,11 @@ function matchToken(src) {
 
         try{
             if (tokentypes[tokenType].regex.test(src)) {
-                console.log("matchedToken");
+                console.log("matchedToken" + tokentypes[tokenType].regex);
                 return tokentypes[tokenType];
             }
-            console.log("mismatched token" + tokentypes[tokenType].regex);
         }
-        catch (er) {
+        catch (erTEST) {
             console.log("caught error");
             return null;
         } 
