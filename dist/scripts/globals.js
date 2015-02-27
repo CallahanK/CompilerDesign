@@ -4,6 +4,7 @@ var onDocumentLoad = function() {
 };
 */
 var _Lexer = TSC.Lexer;
+var _Parser = TSC.Parser;
 //test
 // Global variables
 var sourceCode = document.getElementById("taSourceCode").value;
@@ -15,3 +16,5 @@ var errorCount = 0;
 var lexErrors = [];
 //temp
 var lexError = false;
+// Parser variables
+var nextTokenIndex = 0;

@@ -5,7 +5,7 @@ var onDocumentLoad = function() {
 };
 */
 var _Lexer = TSC.Lexer;
-
+var _Parser = TSC.Parser;
 
 
 
@@ -21,4 +21,7 @@ var _Lexer = TSC.Lexer;
     var errorCount = 0;
     var lexErrors = [];
     //temp
-    var lexError = false;    
+    var lexError = false;  
+
+// Parser variables
+    var nextTokenIndex = 0;  
