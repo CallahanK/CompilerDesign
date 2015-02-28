@@ -1,0 +1,60 @@
+/* TEST CASES */
+
+
+//This one
+//Lexes and breaks in parse on an if unexpected
+{intfintif=2}$
+
+//Assignments
+//Semantic Error gets through
+{
+int a 
+a=3
+
+int b
+b=4
+int c
+c=(a==4)
+print (c)
+c=(a==b)
+print (c)
+if (a!=b){
+print(a)
+print(b)
+}
+
+
+//Ignores whitespace
+}$
+
+
+
+      
+    
+ 
+ 
+ 
+ 
+
+                                                 {          int     
+      a        }  
+
+
+//String mode test
+//Doesn't match keywords in a string
+{print (       "  test   string   while if print        "         )}$              
+
+
+//Lots of braces
+{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}$
+
+
+//Parse Warning
+//No EOF marker, EOF marker added
+{
+int a
+print (a)
+}
+
+
+

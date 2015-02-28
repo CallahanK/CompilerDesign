@@ -17,12 +17,12 @@ var TSC;
                 matchByValue("}");
             }
             function parseStatementList() {
-                //TODO
                 var tmpNextToken = nextToken().kind.name;
                 console.log("attempting parseStatement list");
                 if (tmpNextToken == 'T_PRINT' || tmpNextToken == 'T_WHILE' || tmpNextToken == 'T_IF' || tmpNextToken == 'T_LBRACE' || tmpNextToken == 'T_INT' || tmpNextToken == 'T_STRING' || tmpNextToken == 'T_BOOLEAN' || tmpNextToken == 'T_CHAR') {
                     console.log("matched a statement");
                     parseStatement();
+                    parseStatementList();
                 }
                 else {
                 }
@@ -80,7 +80,6 @@ var TSC;
             }
             function parseExpr() {
                 if (nextToken().kind.name == 'T_DIGIT') {
-                    parseDigit();
                     parseIntExpr();
                 }
                 else if (nextToken().value == '"') {
@@ -174,59 +173,67 @@ var TSC;
                 matchByValue('+');
             }
             //Recurrsive Descent Parser End
+            //Matches a terminal by the char in the src code
             function matchByValue(tmpMatch) {
                 if (tmpMatch == "$") {
                     eofReached = true;
                 }
                 //TODO
-                putMessage("Expecting: " + tmpMatch);
-                putMessage("Found: " + nextToken().value);
+                parseMessages.push("Expecting: " + tmpMatch);
+                parseMessages.push("Found: " + nextToken().value);
                 if (tmpMatch == nextToken().value) {
-                    putMessage("Successfully matched, token consumed");
+                    parseMessages.push("Successfully matched, token consumed");
                 }
                 else {
                     parseError = true;
-                    putMessage("Error on line " + nextToken().line + "found token " + nextToken().value);
+                    parseErrors.push("Error on line: " + nextToken().line + " found unexpected token \'" + nextToken().value + "\'");
                 }
                 //Consume token
                 nextTokenIndex++;
             }
+            //Matches a terminal by its type
+            //Useful for digit and char, as it limits the number of 
+            //comparisons needed
             function matchByType(tmpMatch) {
-                if (tmpMatch == "$") {
+                if (nextToken().value == "$") {
                     eofReached = true;
                 }
                 //TODO
-                putMessage("Expecting: " + tmpMatch);
-                putMessage("Found: " + nextToken().value);
+                parseMessages.push("Expecting: " + tmpMatch);
+                parseMessages.push("Found: " + nextToken().value);
                 if (tmpMatch == nextToken().kind.name) {
-                    putMessage("Successfully matched, token consumed");
+                    parseMessages.push("Successfully matched, token consumed");
                 }
                 else {
                     parseError = true;
-                    putMessage("Error on line " + nextToken().line + "found token " + nextToken().value);
+                    parseErrors.push("Error on line: " + nextToken().line + " found unexpected token \'" + nextToken().value + "\'");
                 }
-                //Consume token
+                //Consume token 
                 nextTokenIndex++;
             }
+            //Returns the token currently being parsed
+            //Also checks and handles early or missing eof marker
             function nextToken() {
                 //EOF reached early
                 if (eofReached && nextTokenIndex < tokenList.length - 1) {
                     //ADD error 
                     var currentToken = tokenList[nextTokenIndex];
                     nextTokenIndex = tokenList.length - 1;
-                    //TEMP message
-                    putMessage("NextTokenIndex: " + nextTokenIndex);
-                    putMessage("tokenList.length: " + tokenList.length);
-                    putMessage("Parse Error: EOF marker reached with source code remaining");
+                    //TEMP message 
+                    parseErrors.push("Error on line: " + currentToken.line + " EOF marker reached with source code remaining ");
+                }
+                if (nextTokenIndex == tokenList.length - 1 && !eofReached) {
+                    //Warning
+                    var eofToken = new Token();
+                    eofToken.kind = new TokenType(R_EOF, "T_EOF", 1);
+                    eofToken.line = currentLine;
+                    eofToken.value = "$";
+                    tokenList.push(eofToken);
+                    parseWarnings.push("Warning: EOF reached without EOF marker, EOF marker added");
                 }
                 if (nextTokenIndex < tokenList.length) {
                     var currentToken = tokenList[nextTokenIndex];
                 }
-                //else if {
-                //}
-                //TODO
-                //End of file check
-                //EOF token check
                 return currentToken;
             }
         };

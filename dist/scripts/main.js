@@ -2,7 +2,7 @@
 function init() {
     // Clear the message box. 
     document.getElementById("taOutput").value = "";
-    // Set the initial values for our globals.
+    // Set the initial values for our globals. 
     tokenList = [];
     inString = false;
     currentLine = 1;
@@ -13,32 +13,55 @@ function init() {
     nextTokenIndex = 0;
     parseError = false;
     eofReached = false;
+    parseMessages = [];
+    parseWarnings = [];
+    parseErrors = [];
 }
 function btnCompile_click() {
     // This is executed as a result of the user pressing the 
     // "compile" button between the two text areas, above.  
     // Note the <input> element's event handler: onclick="btnCompile_click();
     init();
-    // Grab the tokens from the lexer . . .
-    //tokenList = _Lexer.lex();
-    putMessage("Lexing Started");
+    // Grab the tokens from the lexer . . .     
+    //tokenList = _Lexer.lex(); 
     sourceCode = document.getElementById("taSourceCode").value;
-    putMessage("Src:" + sourceCode);
-    tokenList = _Lexer.lex();
-    if (!lexError) {
-        for (var token in tokenList) {
-            putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name + "  |  \'" + tokenList[token].value + "\'");
+    putMessage("Source:" + sourceCode);
+    //Tests if src exists
+    if (!(sourceCode.trim() == "")) {
+        putMessage("Lexing Started");
+        tokenList = _Lexer.lex();
+        if (!lexError) {
+            putMessage("Lex Successful");
+            for (var token in tokenList) {
+                putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name + "  |  \'" + tokenList[token].value + "\'");
+            }
+            putMessage("Parsing Started");
+            _Parser.parse();
+            if (!parseError) {
+                putMessage("Parse Successful");
+                for (var warning in parseWarnings) {
+                    putMessage(parseWarnings[warning]);
+                }
+                for (var message in parseMessages) {
+                    putMessage(parseMessages[message]);
+                }
+            }
+            else {
+                putMessage("Parse  ERROR");
+                for (var error in parseErrors) {
+                    putMessage(parseErrors[error]);
+                }
+            }
+        }
+        else {
+            putMessage("Lex ERROR, parse cancelled");
+            for (var error in lexErrors) {
+                putMessage(lexErrors[error]);
+            }
         }
     }
     else {
-        putMessage("Lex ERROR, parse cancelled");
-        for (var error in lexErrors) {
-            putMessage(lexErrors[error]);
-        }
-    }
-    if (!lexError) {
-        putMessage("Commencing Parse");
-        _Parser.parse();
+        putMessage("There is no source code to compile");
     }
 }
 function putMessage(msg) {

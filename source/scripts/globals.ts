@@ -20,10 +20,12 @@ var _Parser = TSC.Parser;
     var currentLine = 1;
     var errorCount = 0;
     var lexErrors = [];
-    //temp
     var lexError = false;  
 
 // Parser variables
     var nextTokenIndex = 0;  
     var parseError = false;
     var eofReached = false;
+    var parseMessages = [];
+    var parseWarnings = [];
+    var parseErrors = [];

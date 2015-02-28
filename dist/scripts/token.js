@@ -1,4 +1,5 @@
 /* token.ts */
+//Token class for individual, unique tokens built by the lexer
 var Token = (function () {
     function Token() {
     }
@@ -16,7 +17,7 @@ var R_BOOLEQ = new RegExp('^==');
 var R_ASSIGN = new RegExp('^[=]');
 var R_NTBOOLEQ = new RegExp('^!=');
 var R_INTOP = new RegExp('^[+]');
-var R_SPACE = new RegExp('^\\s');
+var R_SPACE = new RegExp('^[^\\S\\r\\n]');
 //Keywords
 var R_PRINT = new RegExp('^print');
 var R_WHILE = new RegExp('^while');
@@ -28,7 +29,8 @@ var R_BOOLTRUE = new RegExp('^true');
 var R_BOOLFALSE = new RegExp('^false');
 var R_CHAR = new RegExp('^[a-z]');
 var R_DIGIT = new RegExp('^[0-9]');
-var R_NEWLINE = new RegExp('^[\\S\\n\\r]');
+var R_NEWLINE = new RegExp('^[\\n\\r]');
+//Class for token kinds, also used as an element of a token
 var TokenType = (function () {
     function TokenType(regex, name, matchLen) {
         this.regex = regex;
@@ -37,9 +39,10 @@ var TokenType = (function () {
     }
     return TokenType;
 })();
+//Collection of token kinds in significant order
 var tokentypes = [];
 //test
-//tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1));     //[a-z]
+//tokentypes.push(new TokenType(R_CHAR, "T_CHAR", 1));       //[a-z]
 //Keywords
 tokentypes.push(new TokenType(R_PRINT, "T_PRINT", 5)); //print
 tokentypes.push(new TokenType(R_WHILE, "T_WHILE", 5)); //while
@@ -64,11 +67,19 @@ tokentypes.push(new TokenType(R_BOOLEQ, "T_BOOLEQ", 2)); //==
 tokentypes.push(new TokenType(R_ASSIGN, "T_ASSIGN", 1)); //=
 tokentypes.push(new TokenType(R_NTBOOLEQ, "T_NTBOOLEQ", 2)); //!=
 tokentypes.push(new TokenType(R_INTOP, "T_INTOP", 1)); //+
-tokentypes.push(new TokenType(R_SPACE, "T_SPACE", 1)); //' '
+//NewLine must be before space, as whitespace also captures newline
+//A better regex was implemented to fix this but it was inconsistent 
+//so ordering was a better solution
 tokentypes.push(new TokenType(R_NEWLINE, "T_NEWLINE", 1)); // \n | \r
+tokentypes.push(new TokenType(R_SPACE, "T_SPACE", 1)); //' '
+//Takes in the current src code and finds the longest token kind match
+//at the front of the string
 function matchToken(src) {
     console.log('try to match token');
     for (var tokenType in tokentypes) {
+        if (inString && tokentypes[tokenType].matchLen > 1) {
+            continue;
+        }
         try {
             if (tokentypes[tokenType].regex.test(src)) {
                 console.log("matchedToken" + tokentypes[tokenType].regex);
@@ -82,6 +93,10 @@ function matchToken(src) {
     }
     return null;
 }
+//Returns the length of a token
+//if token is not a valid token
+//returns 1 to skip it and continue lexing 
+//to find any further invalid chars
 function getTokenLength(token) {
     if (token instanceof TokenType) {
         return token.matchLen;

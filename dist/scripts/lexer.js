@@ -7,11 +7,15 @@ var TSC;
         Lexer.lex = function () {
             // Trim the leading and trailing spaces.
             sourceCode = TSC.Utils.trim(sourceCode);
+            //Returns an array of tokens
             return tokenize(sourceCode);
             function tokenize(tmpSrc) {
+                //Gets information on the current match
                 var currentTokenType = matchToken(tmpSrc);
                 var currentLength = getTokenLength(currentTokenType);
+                //Removes the current match from the begin of the src
                 var srcTokenizing = tmpSrc.substring(currentLength);
+                //Creates a new, empty token object
                 var currentToken = new Token();
                 try {
                     console.log("null try");
@@ -24,15 +28,16 @@ var TSC;
                 switch (switcher) {
                     case 'T_NEWLINE':
                         currentLine++;
-                        console.log("NEW LINE");
                     case 'T_SPACE':
+                        console.log("SPACE");
                         if (inString) {
                             currentToken.kind = currentTokenType;
                             currentToken.line = currentLine;
                             currentToken.value = tmpSrc.substring(0, currentLength);
                         }
                         else {
-                            //next token
+                            //Returns the next match instead of 
+                            //Adding a space type token
                             return tokenize(srcTokenizing);
                         }
                         break;
@@ -40,7 +45,7 @@ var TSC;
                         //Lexing error
                         //Don't add token
                         //Continue to next token
-                        lexErrors.push("Unidentified symbol: " + tmpSrc.substring(0, currentLength) + " found on line:" + currentLine);
+                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) + "\' found on line:" + currentLine);
                         errorCount++;
                         lexError = true;
                         break;
@@ -48,12 +53,15 @@ var TSC;
                         //Toggle in string
                         inString = !inString;
                     default:
+                        //Sets the value of the initized token to the
+                        //matched token values
                         console.log("default");
                         currentToken.kind = currentTokenType;
                         currentToken.line = currentLine;
                         currentToken.value = tmpSrc.substring(0, currentLength);
                         break;
                 }
+                //Adds the new token to the tokenList array
                 if (srcTokenizing.length > 0) {
                     console.log("adding token");
                     return new Array(currentToken).concat(tokenize(srcTokenizing));
