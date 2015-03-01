@@ -48,7 +48,7 @@ tokentypes.push(new TokenType(R_PRINT, "T_PRINT", 5)); //print
 tokentypes.push(new TokenType(R_WHILE, "T_WHILE", 5)); //while
 tokentypes.push(new TokenType(R_IF, "T_IF", 2)); //if
 tokentypes.push(new TokenType(R_INT, "T_INT", 3)); //int
-tokentypes.push(new TokenType(R_STRING, "T_STRING", 5)); //string
+tokentypes.push(new TokenType(R_STRING, "T_STRING", 6)); //string
 tokentypes.push(new TokenType(R_BOOLEAN, "T_BOOLEAN", 7)); //boolean
 tokentypes.push(new TokenType(R_BOOLTRUE, "T_BOOLTRUE", 4)); //true
 tokentypes.push(new TokenType(R_BOOLFALSE, "T_BOOLFALSE", 5)); //false

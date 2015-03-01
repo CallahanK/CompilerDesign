@@ -18,16 +18,17 @@ var TSC;
                 //Creates a new, empty token object
                 var currentToken = new Token();
                 try {
-                    console.log("null try");
                     var switcher = currentTokenType.name;
                 }
                 catch (tmpEr) {
-                    console.log("null catch");
                     var switcher = null;
                 }
                 switch (switcher) {
                     case 'T_NEWLINE':
                         currentLine++;
+                        if (inString) {
+                            lexErrors.push("New line symbol found in string on line: " + (currentLine - 1));
+                        }
                     case 'T_SPACE':
                         console.log("SPACE");
                         if (inString) {
@@ -45,7 +46,7 @@ var TSC;
                         //Lexing error
                         //Don't add token
                         //Continue to next token
-                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) + "\' found on line:" + currentLine);
+                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) + "\' found on line: " + currentLine);
                         errorCount++;
                         lexError = true;
                         break;

@@ -22,11 +22,9 @@ module TSC {
                 //Gets the name of the current match
                 //returns null if the match was a null
                 try {
-                    console.log("null try");
                     var switcher = currentTokenType.name;
                 }
                 catch (tmpEr) {
-                    console.log("null catch");
                     var switcher = null;
                 }
                 
@@ -35,6 +33,9 @@ module TSC {
                     //Increaments the line counter
                     case 'T_NEWLINE':
                         currentLine++;
+                        if (inString) {
+                            lexErrors.push("New line symbol found in string on line: " + (currentLine-1));
+                        }
                     //Checks if in a string, and only makes a space type
                     //token if we are in string mode
                     case 'T_SPACE':
@@ -54,7 +55,7 @@ module TSC {
                         //Lexing error
                         //Don't add token
                         //Continue to next token
-                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) +"\' found on line:" + currentLine);
+                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) +"\' found on line: " + currentLine);
                         errorCount++;
                         lexError = true;
                         break;
