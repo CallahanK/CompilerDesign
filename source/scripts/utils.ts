@@ -10,7 +10,7 @@ module TSC {
 
     public static trim(str)      // Use a regular expression to remove leading and trailing spaces.
         {
-        	return str.replace(/^\s+ | \s+$/g, "");
+        	return str.replace(/^\s+|\s+$/g, "");
         	/* 
         	Huh?  Take a breath.  Here we go:
         	- The "|" separates this into two expressions, as in A or B.
