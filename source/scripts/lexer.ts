@@ -55,16 +55,30 @@ module TSC {
                         //Lexing error
                         //Don't add token
                         //Continue to next token
-                        lexErrors.push("Unidentified symbol: \'" + tmpSrc.substring(0, currentLength) +"\' found on line: " + currentLine);
+                        lexErrors.push("Invalid symbol: \'" + tmpSrc.substring(0, currentLength) +"\' found on line: " + currentLine);
                         errorCount++;
                         lexError = true;
                         break;
                     case 'T_QUOTE':
                         //Toggle in string
                         inString = !inString;
+
+                    case 'T_CHAR':
+                        if(inString){
+                            currentToken.kind = currentTokenType;
+                            currentToken.line = currentLine;
+                            currentToken.value = tmpSrc.substring(0, currentLength);
+                            break;
+                        }
                     default:
                         //Sets the value of the initized token to the
                         //matched token values
+                        if(inString){
+                            lexErrors.push("Invalid symbol: \'" + tmpSrc.substring(0, currentLength) + "\' found in CharList on line: " + currentLine);
+                            errorCount++;
+                            lexError = true;
+                            break;
+                        }
                         console.log("default");
                         currentToken.kind = currentTokenType;
                         currentToken.line = currentLine;

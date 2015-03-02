@@ -54,7 +54,7 @@ function btnCompile_click() {
             }
         }
         else {
-            putMessage("Lex ERROR, parse cancelled");
+            putMessage("Lex ERROR, Parse CANCELLED");
             for (var error in lexErrors) {
                 putMessage(lexErrors[error]);
             }
