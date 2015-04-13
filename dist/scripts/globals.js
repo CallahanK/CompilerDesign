@@ -25,4 +25,5 @@ var parseWarnings = [];
 var parseErrors = [];
 // Semantic variables
 var cst = new TSC.Tree;
+var ast = new TSC.Tree;
 var nextTokenIndexSem = 0;

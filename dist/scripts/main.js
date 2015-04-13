@@ -18,6 +18,7 @@ function init() {
     parseErrors = [];
     // Semantic variables
     cst = new TSC.Tree;
+    ast = new TSC.Tree;
     nextTokenIndexSem = 0;
 }
 function btnCompile_click() {
@@ -54,6 +55,10 @@ function btnCompile_click() {
                 putMessage("CST Built");
                 var cstString = _CST.toString(cst);
                 putMessage(cstString);
+                putMessage("Building AST");
+                putMessage("AST Built");
+                var astString = _CST.toString(ast);
+                putMessage(astString);
                 putMessage("SemAnalysis End");
             }
             else {

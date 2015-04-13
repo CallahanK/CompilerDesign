@@ -33,4 +33,5 @@ var _CST = TSC.ConcreteSyntaxTree;
 
 // Semantic variables
     var cst = new TSC.Tree;
+    var ast = new TSC.Tree;
     var nextTokenIndexSem = 0;

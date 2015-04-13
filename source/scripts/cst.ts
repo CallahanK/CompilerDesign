@@ -10,17 +10,21 @@ module TSC {
 
             function parseProgram() {
                 cst.addBranchNode("Program");
+                ast.addBranchNode("Program");
                 parseBlock();
                 matchTerminal();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseBlock() {
                 cst.addBranchNode("Block");
+                ast.addBranchNode("Block");
                 matchTerminal();
                 parseStatementList();
                 matchTerminal();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseStatementList() {
@@ -68,42 +72,52 @@ module TSC {
 
             function parsePrintStatement() {
                 cst.addBranchNode("Print Statement");
+                ast.addBranchNode("Print Statement");
                 matchTerminal();
                 matchTerminal();
                 parseExpr();
                 matchTerminal();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseAssignmentStatement() {
                 cst.addBranchNode("Assignment Statement");
+                ast.addBranchNode("Assignment Statement");
                 parseId();
                 matchTerminal();
                 parseExpr();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseVarDecl() {
                 cst.addBranchNode("Variable Declaration");
+                ast.addBranchNode("Variable Declaration");
                 parseType();
                 parseId();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseWhileStatement() {
                 cst.addBranchNode("While Statement");
+                ast.addBranchNode("While Statement");
                 matchTerminal();
                 parseBooleanExpr();
                 parseBlock();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseIfStatement() {
                 cst.addBranchNode("If Statement");
+                ast.addBranchNode("If Statement");
                 matchTerminal();
                 parseBooleanExpr();
                 parseBlock();
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseExpr() {
@@ -125,14 +139,16 @@ module TSC {
 
             function parseIntExpr() {
                 cst.addBranchNode("Integer Expression");
+                ast.addBranchNode("+");
                 parseDigit()
                 if (nextToken().value == "+") {
                     parseIntOp();
                     parseExpr();
                 } else {
-                    //epsilon production b/c already parsed the digit
+                    //epsilon production b/c already parsed the digit 
                 }
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseStringExpr() {
@@ -181,11 +197,14 @@ module TSC {
             function parseType() {
                 cst.addBranchNode("Type");
                 if (nextToken().value == 'int') {
+                    addASTLeaf();
                     matchTerminal();
                 }
                 else if (nextToken().value == 'string') {
+                    addASTLeaf();
                     matchTerminal();
                 } else {
+                    addASTLeaf();
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -193,18 +212,21 @@ module TSC {
 
             function parseChar() {
                 cst.addBranchNode("Char");
+                addASTLeaf();
                 matchTerminal();
                 cst.returnToParent();
             }
 
             function parseSpace() {
                 cst.addBranchNode("Space");
+                addASTLeaf();
                 matchTerminal();
                 cst.returnToParent();
             }
 
             function parseDigit() {
                 cst.addBranchNode("Digit");
+                addASTLeaf();
                 matchTerminal();
                 cst.returnToParent();
             }
@@ -212,8 +234,10 @@ module TSC {
             function parseBoolOp() {
                 cst.addBranchNode("Bool Operation");
                 if (nextToken().value == '==') {
+                    addASTLeaf();
                     matchTerminal();
                 } else {
+                    addASTLeaf();
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -222,8 +246,10 @@ module TSC {
             function parseBoolVal() {
                 cst.addBranchNode("Bool Value");
                 if (nextToken().value == 'false') {
+                    addASTLeaf();
                     matchTerminal();
                 } else {
+                    addASTLeaf();
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -231,18 +257,25 @@ module TSC {
 
             function parseIntOp() {
                 cst.addBranchNode("Integer Operation");
+                //addASTLeaf(); 
                 matchTerminal();
                 cst.returnToParent();
             }
 
             //Recurrsive Descent Parser End
 
-            //Matches a terminal by the char in the src code
+            //Matches a terminal for CST
             function matchTerminal() {
                 var x = nextToken();
                 cst.addLeafNode(x.value,x);
 
                 nextTokenIndexSem++;
+            }
+
+            function addASTLeaf() {
+                var x = nextToken();
+                ast.addLeafNode(x.value, x);
+
             }
             
 
