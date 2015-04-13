@@ -16,6 +16,9 @@ function init() {
     parseMessages = [];
     parseWarnings = [];
     parseErrors = [];
+    // Semantic variables
+    cst = new TSC.Tree;
+    nextTokenIndexSem = 0;
 }
 function btnCompile_click() {
     // This is executed as a result of the user pressing the 
@@ -45,6 +48,13 @@ function btnCompile_click() {
                 for (var message in parseMessages) {
                     putMessage(parseMessages[message]);
                 }
+                //Start Semantic Analysis
+                putMessage("Building CST");
+                _CST.buildCST();
+                putMessage("CST Built");
+                var cstString = _CST.toString(cst);
+                putMessage(cstString);
+                putMessage("SemAnalysis End");
             }
             else {
                 putMessage("Parse  ERROR");

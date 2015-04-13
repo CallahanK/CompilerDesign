@@ -5,7 +5,8 @@ var onDocumentLoad = function() {
 */
 var _Lexer = TSC.Lexer;
 var _Parser = TSC.Parser;
-//test
+var _CST = TSC.ConcreteSyntaxTree;
+//test 
 // Global variables
 var sourceCode = document.getElementById("taSourceCode").value;
 // Lexer variables
@@ -22,3 +23,6 @@ var eofReached = false;
 var parseMessages = [];
 var parseWarnings = [];
 var parseErrors = [];
+// Semantic variables
+var cst = new TSC.Tree;
+var nextTokenIndexSem = 0;

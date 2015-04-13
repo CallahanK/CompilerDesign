@@ -75,19 +75,16 @@ tokentypes.push(new TokenType(R_SPACE, "T_SPACE", 1)); //' '
 //Takes in the current src code and finds the longest token kind match
 //at the front of the string
 function matchToken(src) {
-    console.log('try to match token');
     for (var tokenType in tokentypes) {
         if (inString && tokentypes[tokenType].matchLen > 1) {
             continue;
         }
         try {
             if (tokentypes[tokenType].regex.test(src)) {
-                console.log("matchedToken" + tokentypes[tokenType].regex);
                 return tokentypes[tokenType];
             }
         }
         catch (erTEST) {
-            console.log("caught error");
             return null;
         }
     }
@@ -96,7 +93,7 @@ function matchToken(src) {
 //Returns the length of a token
 //if token is not a valid token
 //returns 1 to skip it and continue lexing 
-//to find any further invalid chars
+//to find any further invalid chars 
 function getTokenLength(token) {
     if (token instanceof TokenType) {
         return token.matchLen;
