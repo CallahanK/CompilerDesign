@@ -6,6 +6,7 @@ var onDocumentLoad = function() {
 var _Lexer = TSC.Lexer;
 var _Parser = TSC.Parser;
 var _CST = TSC.ConcreteSyntaxTree;
+var _Analyser = TSC.SemanticAnalyser;
 //test 
 // Global variables
 var sourceCode = document.getElementById("taSourceCode").value;
@@ -27,3 +28,5 @@ var parseErrors = [];
 var cst = new TSC.Tree;
 var ast = new TSC.Tree;
 var nextTokenIndexSem = 0;
+var scopeCount = 0;
+var symbolTable = new TSC.SymbolTable;

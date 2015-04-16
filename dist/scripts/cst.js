@@ -6,7 +6,7 @@ var TSC;
         }
         ConcreteSyntaxTree.buildCST = function () {
             parseProgram();
-            //Recurrsive Descent Parser 
+            //Builds the CST and the AST 
             function parseProgram() {
                 cst.addBranchNode("Program");
                 ast.addBranchNode("Program");

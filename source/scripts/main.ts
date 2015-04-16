@@ -24,6 +24,8 @@
         cst = new TSC.Tree;
         ast = new TSC.Tree;
         nextTokenIndexSem = 0;
+        scopeCount = 0;
+        symbolTable = new TSC.SymbolTable;
     } 
 
     function btnCompile_click() {        
@@ -58,7 +60,7 @@
                         putMessage(parseMessages[message]);
                     }
 
-                    //Start Semantic Analysis
+                    //Start Semantic Analysis 
                     putMessage("Building CST");
                     _CST.buildCST();
                     putMessage("CST Built");
@@ -71,6 +73,10 @@
                     var astString = _CST.toString(ast);
                     putMessage(astString);
                     putMessage("SemAnalysis End");
+
+                    _Analyser.analyse();
+                    console.log(symbolTable);
+
                 } else {
                     putMessage("Parse  ERROR");
                     for (var error in parseErrors) {

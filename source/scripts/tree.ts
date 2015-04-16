@@ -1,4 +1,4 @@
-﻿ /* semantic.ts */ 
+﻿ /* tree.ts */ 
 
 module TSC {
     export class Tree {
@@ -35,10 +35,11 @@ module TSC {
 
     
 
-    interface Node {
+    export interface Node {
         name: string;
         parent: Node;
         children: Node[];
+        token?: Token;
     }
 
     class BranchNode implements Node {
@@ -53,9 +54,9 @@ module TSC {
 
     }
 
-    class LeafNode implements Node {
+    export class LeafNode implements Node {
         name: string;
-        token: Token
+        token: Token;
         parent: Node;
         children: Node[];
 

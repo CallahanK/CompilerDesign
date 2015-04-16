@@ -47,4 +47,5 @@ var TSC;
         }
         return LeafNode;
     })();
+    TSC.LeafNode = LeafNode;
 })(TSC || (TSC = {}));

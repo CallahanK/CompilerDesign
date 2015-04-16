@@ -6,7 +6,7 @@ module TSC {
             
             parseProgram(); 
 
-            //Recurrsive Descent Parser 
+            //Builds the CST and the AST 
 
             function parseProgram() {
                 cst.addBranchNode("Program");
