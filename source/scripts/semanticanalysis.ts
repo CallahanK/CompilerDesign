@@ -25,8 +25,41 @@ module TSC {
                         //Error
                         //Tried to declare an existing variable on line ...
                     }
+                }
+
+                if (node.name=="Assignment Statement"){
+
+                    var assignId = node.children[0].name;
+                    var assignSymbol = symbolTable.current.symbols[assignId];
+
+                    if (assignSymbol == null) {
+                        //Error
+                        //Tried to assign to an undeclared variable
+                    } else {
+                        //Check type
+                        switch(assignSymbol.type){
+                            case 'int':
+                                //case
+                                break;
+                            case 'string':
+                                var stringAssign = "";
+                                for (var i = 1, len = node.children.length; i < len; i++) {
+                                    //if(   node.children[i].name is alpha )
+                                    //  stringAssign = stringAssign + name;
+                                }
+                                break;
+                            case 'boolean':
+                                //case
+                                break;
+                            default:
+                                //Error should not happen
+                                //Type error in var declaration
+
+                        }
+                    }
 
                 }
+
                 node.children.forEach
                 //Recursive call on children
                 for (var i = 0, len = node.children.length; i < len; i++) {
@@ -84,6 +117,8 @@ module TSC {
         type: string;
         value: any;
         line: number;
+        initalized: boolean;
+        used: boolean;
 
         constructor(type:string, value:any, line:number){
             this.type = type;

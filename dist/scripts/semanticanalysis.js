@@ -20,6 +20,26 @@ var TSC;
                     else {
                     }
                 }
+                if (node.name == "Assignment Statement") {
+                    var assignId = node.children[0].name;
+                    var assignSymbol = symbolTable.current.symbols[assignId];
+                    if (assignSymbol == null) {
+                    }
+                    else {
+                        switch (assignSymbol.type) {
+                            case 'int':
+                                break;
+                            case 'string':
+                                var stringAssign = "";
+                                for (var i = 1, len = node.children.length; i < len; i++) {
+                                }
+                                break;
+                            case 'boolean':
+                                break;
+                            default:
+                        }
+                    }
+                }
                 node.children.forEach;
                 for (var i = 0, len = node.children.length; i < len; i++) {
                     buildSymbolTable(node.children[i]);
