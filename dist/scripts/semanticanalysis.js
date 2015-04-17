@@ -25,6 +25,140 @@ var TSC;
                 }
                 existsInScope(varName, scope.parent);
             }
+            function isIntExpr(node) {
+                if (node.children.length < 2 && node.name == "+" && node.children[0].type == "digit") {
+                    return true;
+                }
+                if (node.name == "+" && node.children[0].type == "digit") {
+                    isIntExpr(node.children[1]);
+                }
+                else {
+                    return false;
+                }
+            }
+            function isBoolExpr(node) {
+                if (node.name == "Compare") {
+                    //expr boolOp expr
+                    if (node.children[0].type == "id") {
+                        if (!existsInScope(node.children[0].name, symbolTable.current)) {
+                            //Error
+                            //Variable does not exist in scope
+                            return false;
+                        }
+                        if (node.children[1].type == "id") {
+                            if (!existsInScope(node.children[1].name, symbolTable.current)) {
+                                //Error
+                                //Variable does not exist in scope
+                                return false;
+                            }
+                            if (getSymbol(node.children[0].name, symbolTable.current).type == getSymbol(node.children[1].name, symbolTable.current).type) {
+                                //Successful Check - No Error
+                                //node.children[0] is used 
+                                //node.children[1] is used
+                                return true;
+                            }
+                            else {
+                                //Not comparable
+                                return false;
+                            }
+                        }
+                        else {
+                            var compSymbol = getSymbol(node.children[0].name, symbolTable.current);
+                            switch (compSymbol.type) {
+                                case 'int':
+                                    if (isIntExpr(node.children[1])) {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                case 'string':
+                                    if (node.children[1].type == "string") {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                case 'boolean':
+                                    if (isBoolExpr(node.children[1])) {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                default:
+                            }
+                        }
+                    }
+                    if (node.children[1].type == "id") {
+                        if (!existsInScope(node.children[1].name, symbolTable.current)) {
+                            //Error
+                            //Variable does not exist in scope
+                            return false;
+                        }
+                        else {
+                            var compSymbol = getSymbol(node.children[1].name, symbolTable.current);
+                            switch (compSymbol.type) {
+                                case 'int':
+                                    if (isIntExpr(node.children[0])) {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                case 'string':
+                                    if (node.children[0].type == "string") {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                case 'boolean':
+                                    if (isBoolExpr(node.children[0])) {
+                                        return true;
+                                    }
+                                    else {
+                                        return false;
+                                    }
+                                    break;
+                                default:
+                            }
+                        }
+                    }
+                    if (isIntExpr(node.children[0])) {
+                        if (isIntExpr(node.children[1])) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    if (node.children[0].type == "string") {
+                        if (node.children[1].type == "string") {
+                            return true;
+                        }
+                        return false;
+                    }
+                    if (isBoolExpr(node.children[0])) {
+                        if (isBoolExpr(node.children[1])) {
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+                else if (node.type == "boolean") {
+                    //boolval
+                    return true;
+                }
+                else {
+                    //Error 
+                    //Not a boolean
+                    return false;
+                }
+            }
             //Pre-order traversal
             function buildSymbolTable(node) {
                 //Current node
@@ -42,7 +176,7 @@ var TSC;
                     //before closing scope
                     console.log(symbolTable.current);
                     symbolTable.closeScope();
-                }
+                } //End Block
                 if (node.name == "Variable Declaration") {
                     var newId = node.children[1].name;
                     //Checks just the current scope
@@ -51,7 +185,7 @@ var TSC;
                     }
                     else {
                     }
-                }
+                } //End Var Decl
                 if (node.name == "Assignment Statement") {
                     var assignId = node.children[0].name;
                     var assignExpr = node.children[1].name;
@@ -79,19 +213,72 @@ var TSC;
                             var assignSymbol = getSymbol(assignId, symbolTable.current);
                             switch (assignSymbol.type) {
                                 case 'int':
+                                    if (isIntExpr(node.children[1])) {
+                                    }
+                                    else {
+                                    }
                                     break;
                                 case 'string':
-                                    var stringAssign = "";
+                                    if (node.children[1].type == "string") {
+                                    }
+                                    else {
+                                    }
                                     break;
                                 case 'boolean':
+                                    if (isBoolExpr(node.children[1])) {
+                                    }
+                                    else {
+                                    }
                                     break;
                                 default:
                             }
                         }
                     }
-                }
+                } //End Assign
+                if (node.name == "Print Statement") {
+                    if (node.children[0].type == "id") {
+                        if (!existsInScope(node.children[0].name, symbolTable.current)) {
+                        }
+                        else {
+                            if (!getSymbol(node.children[0].name, symbolTable.current).initialized) {
+                            }
+                        }
+                    }
+                    else if (node.children[0].name == "+") {
+                        if (isIntExpr(node.children[0])) {
+                        }
+                        else {
+                        }
+                    }
+                    else if (node.children[0].type == "string") {
+                    }
+                    else {
+                        if (isBoolExpr(node.children[0])) {
+                        }
+                        else {
+                        }
+                    }
+                } //End Print
+                if (node.name == "If Statement") {
+                    if (isBoolExpr(node.children[0])) {
+                        //Good Bool
+                        //Check the block
+                        buildSymbolTable(node.children[1]);
+                    }
+                    else {
+                    }
+                } //End If
+                if (node.name == "While Statement") {
+                    if (isBoolExpr(node.children[0])) {
+                        //Good Bool
+                        //Check the block
+                        buildSymbolTable(node.children[1]);
+                    }
+                    else {
+                    }
+                } //End While
+                buildSymbolTable(ast.current);
             }
-            buildSymbolTable(ast.current);
         };
         return SemanticAnalyser;
     })();

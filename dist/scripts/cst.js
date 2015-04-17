@@ -145,6 +145,7 @@ var TSC;
             function parseBooleanExpr() {
                 cst.addBranchNode("Bool Expression");
                 if (nextToken().value == '(') {
+                    ast.addBranchNode("Compare");
                     matchTerminal();
                     parseExpr();
                     parseBoolOp();
@@ -215,11 +216,11 @@ var TSC;
             function parseBoolOp() {
                 cst.addBranchNode("Bool Operation");
                 if (nextToken().value == '==') {
-                    addASTLeaf("equals");
+                    //addASTLeaf("equals");
                     matchTerminal();
                 }
                 else {
-                    addASTLeaf("not equals");
+                    //addASTLeaf("not equals");
                     matchTerminal();
                 }
                 cst.returnToParent();
