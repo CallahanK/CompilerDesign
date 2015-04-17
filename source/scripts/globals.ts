@@ -35,5 +35,7 @@ var _Analyser = TSC.SemanticAnalyser;
     var cst = new TSC.Tree;
     var ast = new TSC.Tree;
     var nextTokenIndexSem = 0;
+    var stringMode = false;
+    var stringBuild = "";
     var scopeCount = 0;
     var symbolTable = new TSC.SymbolTable;

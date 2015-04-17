@@ -9,11 +9,9 @@ var TSC;
             //Builds the CST and the AST 
             function parseProgram() {
                 cst.addBranchNode("Program");
-                ast.addBranchNode("Program");
                 parseBlock();
                 matchTerminal();
                 cst.returnToParent();
-                ast.returnToParent();
             }
             function parseBlock() {
                 cst.addBranchNode("Block");
@@ -137,8 +135,10 @@ var TSC;
             }
             function parseStringExpr() {
                 cst.addBranchNode("String Expression");
+                buildString();
                 matchTerminal();
                 parseCharList();
+                buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
@@ -158,16 +158,19 @@ var TSC;
             }
             function parseId() {
                 cst.addBranchNode("Id");
+                addASTLeaf("id");
                 parseChar();
                 cst.returnToParent();
             }
             function parseCharList() {
                 cst.addBranchNode("Char List");
                 if (nextToken().kind.name == 'T_CHAR') {
+                    buildString();
                     parseChar();
                     parseCharList();
                 }
                 else if (nextToken().kind.name == 'T_SPACE') {
+                    buildString();
                     parseSpace();
                     parseCharList();
                 }
@@ -178,45 +181,45 @@ var TSC;
             function parseType() {
                 cst.addBranchNode("Type");
                 if (nextToken().value == 'int') {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 }
                 else if (nextToken().value == 'string') {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 }
                 else {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 }
                 cst.returnToParent();
             }
             function parseChar() {
                 cst.addBranchNode("Char");
-                addASTLeaf();
+                //buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
             function parseSpace() {
                 cst.addBranchNode("Space");
-                addASTLeaf();
+                //buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
             function parseDigit() {
                 cst.addBranchNode("Digit");
-                addASTLeaf();
+                addASTLeaf("digit");
                 matchTerminal();
                 cst.returnToParent();
             }
             function parseBoolOp() {
                 cst.addBranchNode("Bool Operation");
                 if (nextToken().value == '==') {
-                    addASTLeaf();
+                    addASTLeaf("equals");
                     matchTerminal();
                 }
                 else {
-                    addASTLeaf();
+                    addASTLeaf("not equals");
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -224,11 +227,11 @@ var TSC;
             function parseBoolVal() {
                 cst.addBranchNode("Bool Value");
                 if (nextToken().value == 'false') {
-                    addASTLeaf();
+                    addASTLeaf("boolean");
                     matchTerminal();
                 }
                 else {
-                    addASTLeaf();
+                    addASTLeaf("boolean");
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -243,12 +246,26 @@ var TSC;
             //Matches a terminal for CST
             function matchTerminal() {
                 var x = nextToken();
-                cst.addLeafNode(x.value, x);
+                cst.addLeafNode(x.value, x, "");
                 nextTokenIndexSem++;
             }
-            function addASTLeaf() {
+            function addASTLeaf(type) {
                 var x = nextToken();
-                ast.addLeafNode(x.value, x);
+                ast.addLeafNode(x.value, x, type);
+            }
+            function buildString() {
+                var x = nextToken();
+                if (!stringMode && x.value == "\"") {
+                    stringMode = !stringMode;
+                }
+                else if (stringMode && x.value == "\"") {
+                    ast.addLeafNode(stringBuild, x, "string");
+                    stringMode = !stringMode;
+                    stringBuild = "";
+                }
+                else {
+                    stringBuild = stringBuild + x.value;
+                }
             }
             //Returns the token currently being added to CST
             function nextToken() {

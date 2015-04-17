@@ -10,11 +10,9 @@ module TSC {
 
             function parseProgram() {
                 cst.addBranchNode("Program");
-                ast.addBranchNode("Program");
                 parseBlock();
                 matchTerminal();
                 cst.returnToParent();
-                ast.returnToParent();
             }
 
             function parseBlock() {
@@ -34,7 +32,7 @@ module TSC {
                     parseStatement();
                     parseStatementList();
                 } else {
-                    //epsilon production 
+                    //epsilon production  
                 }
                 cst.returnToParent();
             }
@@ -153,8 +151,10 @@ module TSC {
 
             function parseStringExpr() {
                 cst.addBranchNode("String Expression");
+                buildString();
                 matchTerminal();
                 parseCharList();
+                buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
@@ -175,6 +175,7 @@ module TSC {
 
             function parseId() {
                 cst.addBranchNode("Id");
+                addASTLeaf("id");
                 parseChar();
                 cst.returnToParent();
             }
@@ -182,14 +183,16 @@ module TSC {
             function parseCharList() {
                 cst.addBranchNode("Char List");
                 if (nextToken().kind.name == 'T_CHAR') {
+                    buildString();
                     parseChar();
                     parseCharList();
                 }
                 else if (nextToken().kind.name == 'T_SPACE') {
+                    buildString();
                     parseSpace();
                     parseCharList();
                 } else {
-                    //epsilon production
+                    //epsilon production 
                 }
                 cst.returnToParent();
             }
@@ -197,14 +200,14 @@ module TSC {
             function parseType() {
                 cst.addBranchNode("Type");
                 if (nextToken().value == 'int') {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 }
                 else if (nextToken().value == 'string') {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 } else {
-                    addASTLeaf();
+                    addASTLeaf("type");
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -212,21 +215,21 @@ module TSC {
 
             function parseChar() {
                 cst.addBranchNode("Char");
-                addASTLeaf();
+                //buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
 
             function parseSpace() {
                 cst.addBranchNode("Space");
-                addASTLeaf();
+                //buildString();
                 matchTerminal();
                 cst.returnToParent();
             }
 
             function parseDigit() {
                 cst.addBranchNode("Digit");
-                addASTLeaf();
+                addASTLeaf("digit");
                 matchTerminal();
                 cst.returnToParent();
             }
@@ -234,10 +237,10 @@ module TSC {
             function parseBoolOp() {
                 cst.addBranchNode("Bool Operation");
                 if (nextToken().value == '==') {
-                    addASTLeaf();
+                    addASTLeaf("equals");
                     matchTerminal();
                 } else {
-                    addASTLeaf();
+                    addASTLeaf("not equals");
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -246,10 +249,10 @@ module TSC {
             function parseBoolVal() {
                 cst.addBranchNode("Bool Value");
                 if (nextToken().value == 'false') {
-                    addASTLeaf();
+                    addASTLeaf("boolean");
                     matchTerminal();
                 } else {
-                    addASTLeaf();
+                    addASTLeaf("boolean");
                     matchTerminal();
                 }
                 cst.returnToParent();
@@ -267,17 +270,32 @@ module TSC {
             //Matches a terminal for CST
             function matchTerminal() {
                 var x = nextToken();
-                cst.addLeafNode(x.value,x);
+                cst.addLeafNode(x.value,x,"");
 
                 nextTokenIndexSem++;
             }
 
-            function addASTLeaf() {
+            function addASTLeaf(type:string) {
                 var x = nextToken();
-                ast.addLeafNode(x.value, x);
-
+                ast.addLeafNode(x.value, x,type);
+                
             }
             
+            function buildString(){
+                var x = nextToken();
+                
+                if (!stringMode && x.value=="\""){
+                    stringMode = !stringMode;
+                } else if (stringMode && x.value=="\""){
+                    ast.addLeafNode(stringBuild, x, "string");
+                    stringMode = !stringMode;
+                    stringBuild = "";
+                } else {
+                    stringBuild = stringBuild + x.value;
+                }
+
+
+            }
 
             //Returns the token currently being added to CST
             function nextToken() {

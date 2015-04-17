@@ -18,10 +18,10 @@ module TSC {
             }
             this.current = tmpNode;
         }
-        addLeafNode(name:string, token:Token) {
-            var tmpNode = new LeafNode(name, token);
+        addLeafNode(name:string, token:Token, type:string) {
+            var tmpNode = new LeafNode(name, token.line, type);
             if (this.root == null) {
-                //Error leaf node shouldnt be root
+                //Error leaf node shouldnt be root 
             } else {
                 tmpNode.parent = this.current;
                 this.current.children.push(tmpNode);
@@ -39,7 +39,8 @@ module TSC {
         name: string;
         parent: Node;
         children: Node[];
-        token?: Token;
+        line?: number;
+        type?: string;
     }
 
     class BranchNode implements Node {
@@ -56,13 +57,15 @@ module TSC {
 
     export class LeafNode implements Node {
         name: string;
-        token: Token;
+        line: number;
+        type: string;
         parent: Node;
         children: Node[];
 
-        constructor(name: string, token: Token) {
+        constructor(name: string, line: number, type: string) {
             this.name = name;
-            this.token = token;
+            this.line = line;
+            this.type = type;
             this.children = [];
         }
 

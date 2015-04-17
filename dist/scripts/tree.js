@@ -17,8 +17,8 @@ var TSC;
             }
             this.current = tmpNode;
         };
-        Tree.prototype.addLeafNode = function (name, token) {
-            var tmpNode = new LeafNode(name, token);
+        Tree.prototype.addLeafNode = function (name, token, type) {
+            var tmpNode = new LeafNode(name, token.line, type);
             if (this.root == null) {
             }
             else {
@@ -40,9 +40,10 @@ var TSC;
         return BranchNode;
     })();
     var LeafNode = (function () {
-        function LeafNode(name, token) {
+        function LeafNode(name, line, type) {
             this.name = name;
-            this.token = token;
+            this.line = line;
+            this.type = type;
             this.children = [];
         }
         return LeafNode;
