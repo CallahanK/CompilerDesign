@@ -28,6 +28,10 @@
         stringBuild = "";
         scopeCount = 0;
         symbolTable = new TSC.SymbolTable;
+        semanticError = false;
+        semanticMessages = [];
+        semanticWarnings = [];
+        semanticErrors = [];
     } 
 
     function btnCompile_click() {        
@@ -50,6 +54,7 @@
                 for (var token in tokenList) {
                     putMessage(tokenList[token].line + "  |  " + tokenList[token].kind.name + "  |  \'" + tokenList[token].value + "\'");
                 }
+                putMessage(" ");
                 putMessage("Parsing Started");
                 _Parser.parse();
 
@@ -63,22 +68,50 @@
                     }
 
                     //Start Semantic Analysis  
+                    console.log("SemAnalysis"); 
+                    putMessage(" ");
+                    putMessage("Semantic Analysis Started");
                     putMessage("Building CST");
                     _CST.buildCST();
                     putMessage("CST Built");
-                    var cstString = _CST.toString(cst);
-                    
-                    putMessage(cstString);
-
                     putMessage("Building AST");
                     putMessage("AST Built");
-                    var astString = _CST.toString(ast);
-                    putMessage(astString);
-                    putMessage("SemAnalysis End");
-
+                    putMessage("Building Symbol Table");
                     _Analyser.analyse();
-                    console.log(symbolTable);
-                    console.log(ast);
+                    if (!semanticError) {
+                        
+                        putMessage("Symbol Table Built");
+
+                        putMessage("Semantic Analysis Successful");
+                        for (var warning in semanticWarnings) {
+                            putMessage(semanticWarnings[warning]);
+                        }
+                        for (var message in semanticMessages) {
+                            putMessage(semanticMessages[message]);
+                        }
+
+                        putMessage(" ");
+                        putMessage("Displaying CST");
+                        var cstString = _CST.toString(cst);
+                        putMessage(cstString);
+                        putMessage("Displaying AST");
+                        var astString = _CST.toString(ast);
+                        putMessage(astString);
+                        putMessage("Displaying Symbol Table");
+                        var symbolString = _Analyser.toString(symbolTable);
+                        putMessage(symbolString);
+
+                    } else {
+                        putMessage("Semantic Analysis ERROR");
+                        for (var error in semanticErrors) {
+                            putMessage(semanticErrors[error]);                             
+                        }                        
+                    }
+
+                    
+                    
+
+                    
                 } else {
                     putMessage("Parse  ERROR");
                     for (var error in parseErrors) {

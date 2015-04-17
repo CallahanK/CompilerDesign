@@ -7,23 +7,25 @@ var TSC;
         SemanticAnalyser.analyse = function () {
             //Checks for id in all accessable scopes
             function existsInScope(varName, scope) {
+                console.log("checking in scope");
                 if (scope.name == "root") {
                     return false;
                 }
                 if (scope.symbols[varName] != null) {
+                    console.log(scope.symbols[varName]);
                     return true;
                 }
-                existsInScope(varName, scope.parent);
+                return existsInScope(varName, scope.parent);
             }
             //Returns symbol by id from nearest scope
             function getSymbol(varName, scope) {
                 if (scope.name == "root") {
-                    return null;
+                    return new Symbol("null", -1);
                 }
                 if (scope.symbols[varName] != null) {
                     return scope.symbols[varName];
                 }
-                existsInScope(varName, scope.parent);
+                return getSymbol(varName, scope.parent);
             }
             function isIntExpr(node) {
                 if (node.children.length < 2 && node.name == "+" && node.children[0].type == "digit") {
@@ -42,19 +44,23 @@ var TSC;
                     if (node.children[0].type == "id") {
                         if (!existsInScope(node.children[0].name, symbolTable.current)) {
                             //Error
-                            //Variable does not exist in scope
+                            semanticErrors.push("Error: Variable: " + node.children[0].name + " undeclared in scope on line: " + node.children[0].line);
+                            semanticError = true;
                             return false;
                         }
                         if (node.children[1].type == "id") {
                             if (!existsInScope(node.children[1].name, symbolTable.current)) {
                                 //Error
-                                //Variable does not exist in scope
+                                semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope on line: " + node.children[1].line);
+                                semanticError = true;
                                 return false;
                             }
                             if (getSymbol(node.children[0].name, symbolTable.current).type == getSymbol(node.children[1].name, symbolTable.current).type) {
                                 //Successful Check - No Error
                                 //node.children[0] is used 
+                                getSymbol(node.children[0].name, symbolTable.current).used = true;
                                 //node.children[1] is used
+                                getSymbol(node.children[1].name, symbolTable.current).used = true;
                                 return true;
                             }
                             else {
@@ -96,7 +102,8 @@ var TSC;
                     if (node.children[1].type == "id") {
                         if (!existsInScope(node.children[1].name, symbolTable.current)) {
                             //Error
-                            //Variable does not exist in scope
+                            semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope");
+                            semanticError = true;
                             return false;
                         }
                         else {
@@ -155,7 +162,8 @@ var TSC;
                 }
                 else {
                     //Error 
-                    //Not a boolean
+                    semanticErrors.push("Error: bad boolean on line " + node.line);
+                    semanticError = true;
                     return false;
                 }
             }
@@ -171,10 +179,7 @@ var TSC;
                     for (var i = 0, len = node.children.length; i < len; i++) {
                         buildSymbolTable(node.children[i]);
                     }
-                    //Clean up / move up scope? 
-                    //TODO - check for unused 
-                    //before closing scope
-                    console.log(symbolTable.current);
+                    //Clean up / move up scope
                     symbolTable.closeScope();
                 } //End Block
                 if (node.name == "Variable Declaration") {
@@ -184,13 +189,20 @@ var TSC;
                         symbolTable.addNewSymbol(newId, node.children[0].name, node.children[1].line);
                     }
                     else {
+                        //Error
+                        semanticErrors.push("Error: Redeclared Variable: " + node.children[1].name + " on line: " + node.children[1].line);
+                        semanticError = true;
                     }
                 } //End Var Decl
                 if (node.name == "Assignment Statement") {
+                    console.log("Assignemnt statement");
                     var assignId = node.children[0].name;
                     var assignExpr = node.children[1].name;
                     //Checks all accessable scopes
                     if (!existsInScope(assignId, symbolTable.current)) {
+                        //Error
+                        semanticErrors.push("Error: Variable: " + assignId + " undeclared in scope on line: " + node.children[0].line);
+                        semanticError = true;
                     }
                     else {
                         //Check type
@@ -198,14 +210,28 @@ var TSC;
                         if (node.children[1].type == "id") {
                             //Check if id being assign has been declared
                             if (!existsInScope(assignExpr, symbolTable.current)) {
+                                //Error 
+                                semanticErrors.push("Error: Variable: " + assignExpr + " undeclared in scope on line: " + node.children[1].line);
+                                semanticError = true;
                             }
                             else {
                                 if (!getSymbol(assignExpr, symbolTable.current).initialized) {
+                                    //Warning 
+                                    semanticWarnings.push("Warning: Assigned from uninitialized variable: " + assignExpr + " on line: " + node.children[1].line);
                                 }
                                 //Check if types match 
                                 if (getSymbol(assignId, symbolTable.current).type == getSymbol(assignExpr, symbolTable.current).type) {
+                                    //Successful Check - No Error
+                                    //The assignment is good
+                                    //assignId is initialized 
+                                    getSymbol(node.children[0].name, symbolTable.current).initialized = true;
+                                    //assignExpr is used
+                                    getSymbol(node.children[1].name, symbolTable.current).used = true;
                                 }
                                 else {
+                                    //Error
+                                    semanticErrors.push("Error: Type Mismatch on variables: " + assignId + " and " + assignExpr + " on line: " + node.children[0].line);
+                                    semanticError = true;
                                 }
                             }
                         }
@@ -214,20 +240,35 @@ var TSC;
                             switch (assignSymbol.type) {
                                 case 'int':
                                     if (isIntExpr(node.children[1])) {
+                                        //Sucessful Check no Error
+                                        assignSymbol.initialized = true;
                                     }
                                     else {
+                                        //Error
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and digit on line: " + node.children[0].line);
+                                        semanticError = true;
                                     }
                                     break;
                                 case 'string':
                                     if (node.children[1].type == "string") {
+                                        //Sucessful Check no Error 
+                                        assignSymbol.initialized = true;
                                     }
                                     else {
+                                        //Error
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and string on line: " + node.children[0].line);
+                                        semanticError = true;
                                     }
                                     break;
                                 case 'boolean':
                                     if (isBoolExpr(node.children[1])) {
+                                        //Sucessful Check no Error
+                                        assignSymbol.initialized = true;
                                     }
                                     else {
+                                        //Error
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and boolean on line: " + node.children[0].line);
+                                        semanticError = true;
                                     }
                                     break;
                                 default:
@@ -238,16 +279,27 @@ var TSC;
                 if (node.name == "Print Statement") {
                     if (node.children[0].type == "id") {
                         if (!existsInScope(node.children[0].name, symbolTable.current)) {
+                            //Error 
+                            semanticErrors.push("Error: Variable: " + node.children[0].name + " undeclared in scope on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                         else {
                             if (!getSymbol(node.children[0].name, symbolTable.current).initialized) {
+                                //Warning 
+                                semanticWarnings.push("Warning: Printing uninitialized variable: " + node.children[0].name + " on line: " + node.children[1].line);
                             }
+                            //Print successful check
+                            //id is used
+                            getSymbol(node.children[0].name, symbolTable.current).used = true;
                         }
                     }
                     else if (node.children[0].name == "+") {
                         if (isIntExpr(node.children[0])) {
                         }
                         else {
+                            //Error
+                            semanticErrors.push("Error: Invalid Integer Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                     }
                     else if (node.children[0].type == "string") {
@@ -256,6 +308,9 @@ var TSC;
                         if (isBoolExpr(node.children[0])) {
                         }
                         else {
+                            //Error 
+                            semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                     }
                 } //End Print
@@ -266,6 +321,9 @@ var TSC;
                         buildSymbolTable(node.children[1]);
                     }
                     else {
+                        //Error
+                        semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                        semanticError = true;
                     }
                 } //End If
                 if (node.name == "While Statement") {
@@ -275,10 +333,59 @@ var TSC;
                         buildSymbolTable(node.children[1]);
                     }
                     else {
+                        //Error
+                        semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                        semanticError = true;
                     }
                 } //End While
-                buildSymbolTable(ast.current);
             }
+            buildSymbolTable(ast.current);
+        };
+        //Return a string representation of the tree. 
+        SemanticAnalyser.toString = function (table) {
+            console.log("about to to string");
+            // Initialize the result string.
+            var traversalResult = "";
+            // Recursive function to handle the expansion of the nodes.
+            function expand(node, depth) {
+                for (var i = 0; i < depth; i++) {
+                    traversalResult += "-";
+                }
+                // If there are no children (i.e., leaf nodes)...
+                if (!node.children || node.children.length === 0) {
+                    // ... note the leaf node.
+                    traversalResult += "<" + node.name + ">";
+                    traversalResult += "\n";
+                    for (var key in node.symbols) {
+                        for (var i = 0; i < depth; i++) {
+                            traversalResult += "-";
+                        }
+                        var value = node.symbols[key];
+                        traversalResult += "-[" + key + " | " + value.type + "]";
+                        traversalResult += "\n";
+                    }
+                }
+                else {
+                    // There are children, so note these interior/branch nodes and ...
+                    traversalResult += "<" + node.name + "> \n";
+                    for (var key in node.symbols) {
+                        for (var i = 0; i < depth; i++) {
+                            traversalResult += "-";
+                        }
+                        var value = node.symbols[key];
+                        traversalResult += "-[" + key + " | " + value.type + "]";
+                        traversalResult += "\n";
+                    }
+                    for (var i = 0; i < node.children.length; i++) {
+                        expand(node.children[i], depth + 1);
+                    }
+                }
+            }
+            // Make the initial call to expand from the root.
+            console.log("about to start recursion");
+            expand(table.root, 0);
+            // Return the result.
+            return traversalResult;
         };
         return SemanticAnalyser;
     })();
@@ -302,6 +409,13 @@ var TSC;
         SymbolTable.prototype.closeScope = function () {
             //Checks for uninitialized vars and reports 
             //Checks for unused vars and reports  
+            for (var key in this.current.symbols) {
+                var value = this.current.symbols[key];
+                if (!value.used) {
+                    //Warning 
+                    semanticWarnings.push("Warning: Unused variable : " + key + " on line: " + value.line);
+                }
+            }
             this.current = this.current.parent;
         };
         SymbolTable.prototype.addNewSymbol = function (name, type, line) {
@@ -320,6 +434,8 @@ var TSC;
     })();
     var Symbol = (function () {
         function Symbol(type, line) {
+            this.initialized = false;
+            this.used = false;
             this.type = type;
             this.line = line;
         }

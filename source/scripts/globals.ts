@@ -39,3 +39,7 @@ var _Analyser = TSC.SemanticAnalyser;
     var stringBuild = "";
     var scopeCount = 0;
     var symbolTable = new TSC.SymbolTable;
+    var semanticError = false;
+    var semanticMessages = [];
+    var semanticWarnings = [];
+    var semanticErrors = [];

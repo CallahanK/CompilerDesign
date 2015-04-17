@@ -6,24 +6,27 @@ module TSC {
 
             //Checks for id in all accessable scopes
             function existsInScope(varName: string, scope: ScopeNode) {
+                console.log("checking in scope");
                 if (scope.name == "root") {
                     return false;
                 }
                 if (scope.symbols[varName] != null) {
+                    
+                    console.log(scope.symbols[varName]);
                     return true;
                 }
-                existsInScope(varName, scope.parent);
+                return existsInScope(varName, scope.parent);
             }
 
             //Returns symbol by id from nearest scope
             function getSymbol(varName: string, scope: ScopeNode) {
                 if (scope.name == "root") {
-                    return null;
+                    return new Symbol("null",-1);
                 }
                 if (scope.symbols[varName] != null) {
                     return scope.symbols[varName];
                 }
-                existsInScope(varName, scope.parent);
+                return getSymbol(varName, scope.parent);
             }
 
             function isIntExpr(node: Node) {
@@ -44,21 +47,25 @@ module TSC {
                     if (node.children[0].type == "id") {
                         if (!existsInScope(node.children[0].name, symbolTable.current)) {
                             //Error
-                            //Variable does not exist in scope
+                            semanticErrors.push("Error: Variable: " + node.children[0].name + " undeclared in scope on line: " + node.children[0].line);
+                            semanticError = true;
                             return false;
                         }
 
                         if (node.children[1].type == "id") {
                             if (!existsInScope(node.children[1].name, symbolTable.current)) {
                                 //Error
-                                //Variable does not exist in scope
+                                semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope on line: " + node.children[1].line);
+                                semanticError = true;
                                 return false;
                             }
 
                             if (getSymbol(node.children[0].name, symbolTable.current).type == getSymbol(node.children[1].name, symbolTable.current).type) {
                                 //Successful Check - No Error
                                 //node.children[0] is used 
+                                getSymbol(node.children[0].name, symbolTable.current).used = true;
                                 //node.children[1] is used
+                                getSymbol(node.children[1].name, symbolTable.current).used = true;
                                 return true;
                             } else {
                                 //Not comparable
@@ -99,7 +106,8 @@ module TSC {
                     if (node.children[1].type == "id") {
                         if (!existsInScope(node.children[1].name, symbolTable.current)) {
                             //Error
-                            //Variable does not exist in scope
+                            semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope");
+                            semanticError = true;
                             return false;
                         } else {
                             var compSymbol = getSymbol(node.children[1].name, symbolTable.current);
@@ -156,7 +164,8 @@ module TSC {
                     return true;
                 } else {
                     //Error 
-                    //Not a boolean
+                    semanticErrors.push("Error: bad boolean on line " + node.line);
+                    semanticError = true;
                     return false;
                 }
             }
@@ -178,10 +187,7 @@ module TSC {
                         buildSymbolTable(node.children[i]);
                     }
                 
-                    //Clean up / move up scope? 
-                    //TODO - check for unused 
-                    //before closing scope
-                    console.log(symbolTable.current);
+                    //Clean up / move up scope
                     symbolTable.closeScope();
                 } //End Block
 
@@ -193,12 +199,13 @@ module TSC {
                         symbolTable.addNewSymbol(newId, node.children[0].name, node.children[1].line);
                     } else {
                         //Error
-                        //Tried to declare an existing variable on line ...
+                        semanticErrors.push("Error: Redeclared Variable: " + node.children[1].name + " on line: " + node.children[1].line);
+                        semanticError = true;
                     }
                 } //End Var Decl
 
                 if (node.name == "Assignment Statement") {
-
+                    console.log("Assignemnt statement");
                     var assignId = node.children[0].name;
                     var assignExpr = node.children[1].name;
                     
@@ -206,23 +213,24 @@ module TSC {
                     //Checks all accessable scopes
                     if (!existsInScope(assignId, symbolTable.current)) {
                         //Error
-                        //Tried to assign to an undeclared variable
+                        semanticErrors.push("Error: Variable: " + assignId + " undeclared in scope on line: " + node.children[0].line);
+                        semanticError = true;
                     } else {
                         //Check type
-
 
                         //Checks if assigning an id to an id
                         if (node.children[1].type == "id") {
                             //Check if id being assign has been declared
                             if (!existsInScope(assignExpr, symbolTable.current)) {
                                 //Error 
-                                //Tried to assign from an undeclared variable
+                                semanticErrors.push("Error: Variable: " + assignExpr + " undeclared in scope on line: " + node.children[1].line);
+                                semanticError = true;
                             }
                             else {
 
                                 if (!getSymbol(assignExpr, symbolTable.current).initialized) {
                                     //Warning 
-                                    //Tried to assign from an uninitialized variable
+                                    semanticWarnings.push("Warning: Assigned from uninitialized variable: " + assignExpr + " on line: " + node.children[1].line);
                                 }
 
                                 //Check if types match 
@@ -230,11 +238,14 @@ module TSC {
                                     //Successful Check - No Error
                                     //The assignment is good
                                     //assignId is initialized 
+                                    getSymbol(node.children[0].name, symbolTable.current).initialized = true;
                                     //assignExpr is used
+                                    getSymbol(node.children[1].name, symbolTable.current).used = true;
 
                                 } else {
                                     //Error
-                                    //type mismatch error 
+                                    semanticErrors.push("Error: Type Mismatch on variables: " + assignId + " and " + assignExpr + " on line: " + node.children[0].line);
+                                    semanticError = true; 
                                 }
                             }
 
@@ -245,25 +256,31 @@ module TSC {
                                 case 'int':
                                     if (isIntExpr(node.children[1])) {
                                         //Sucessful Check no Error
+                                        assignSymbol.initialized = true;
                                     } else {
                                         //Error
-                                        //Type mismatch
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and digit on line: " + node.children[0].line);
+                                        semanticError = true; 
                                     }
                                     break;
                                 case 'string':
                                     if (node.children[1].type == "string") {
                                         //Sucessful Check no Error 
+                                        assignSymbol.initialized = true;
                                     } else {
                                         //Error
-                                        //Type mismatch
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and string on line: " + node.children[0].line);
+                                        semanticError = true; 
                                     }
                                     break;
                                 case 'boolean':
                                     if (isBoolExpr(node.children[1])) {
                                         //Sucessful Check no Error
+                                        assignSymbol.initialized = true;
                                     } else {
                                         //Error
-                                        //Type mismatch
+                                        semanticErrors.push("Error: Type Mismatch on variables: " + assignSymbol + " and boolean on line: " + node.children[0].line);
+                                        semanticError = true; 
                                     }
                                     break;
                                 default:
@@ -278,22 +295,25 @@ module TSC {
                     if (node.children[0].type == "id") {
                         if (!existsInScope(node.children[0].name, symbolTable.current)) {
                             //Error 
-                            //Tried to assign from an undeclared variable
+                            semanticErrors.push("Error: Variable: " + node.children[0].name + " undeclared in scope on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                         else {
                             if (!getSymbol(node.children[0].name, symbolTable.current).initialized) {
                                 //Warning 
-                                //Tried to assign from an uninitialized variable
+                                semanticWarnings.push("Warning: Printing uninitialized variable: " + node.children[0].name + " on line: " + node.children[1].line);
                             }
                             //Print successful check
                             //id is used
+                            getSymbol(node.children[0].name, symbolTable.current).used = true;
                         }
                     } else if (node.children[0].name == "+"){
                         if (isIntExpr(node.children[0])){
                             //Good
                         } else {
                             //Error
-                            //Int expr is not valid
+                            semanticErrors.push("Error: Invalid Integer Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                     } else if (node.children[0].type == "string"){
                         //Good
@@ -302,7 +322,8 @@ module TSC {
                             //Good
                         } else {
                             //Error 
-                            //Bad Bool
+                            semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                            semanticError = true;
                         }
                     }
                 }//End Print
@@ -314,7 +335,8 @@ module TSC {
                         buildSymbolTable(node.children[1]);
                     } else {
                         //Error
-                        //Bad bool
+                        semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                        semanticError = true;
                     }
                 }//End If
 
@@ -325,18 +347,72 @@ module TSC {
                         buildSymbolTable(node.children[1]);
                     } else {
                         //Error
-                        //Bad bool
+                        semanticErrors.push("Error: Invalid Boolean Expression: " + node.children[0].name + " on line: " + node.children[0].line);
+                        semanticError = true;
                     }
                 }//End While
 
-
-                buildSymbolTable(ast.current);
-
-
             }
+
+
+            buildSymbolTable(ast.current);
+
+
+            
 
         } 
 
+        //Return a string representation of the tree. 
+        public static toString(table: SymbolTable) {
+            console.log("about to to string");
+            // Initialize the result string.
+            var traversalResult = "";
+
+            // Recursive function to handle the expansion of the nodes.
+            function expand(node, depth) {
+                // Space out based on the current depth so
+                // this looks at least a little tree-like.
+                for (var i = 0; i < depth; i++) {
+                    traversalResult += "-";
+                }
+
+                // If there are no children (i.e., leaf nodes)...
+                if (!node.children || node.children.length === 0) {
+                    // ... note the leaf node.
+                    traversalResult += "<" + node.name + ">";
+                    traversalResult += "\n";
+                    for (var key in node.symbols) {
+                        for (var i = 0; i < depth; i++) {
+                            traversalResult += "-";
+                        }
+                        var value = node.symbols[key];
+                        traversalResult += "-[" + key + " | " + value.type + "]";
+                        traversalResult += "\n";
+                    }
+                }
+                else {
+                    // There are children, so note these interior/branch nodes and ...
+                    traversalResult += "<" + node.name + "> \n";
+                    for (var key in node.symbols) {
+                        for (var i = 0; i < depth; i++) {
+                            traversalResult += "-";
+                        }
+                        var value = node.symbols[key];
+                        traversalResult += "-[" + key + " | " + value.type + "]";
+                        traversalResult += "\n";
+                    }
+                    // .. recursively expand them.
+                    for (var i = 0; i < node.children.length; i++) {
+                        expand(node.children[i], depth + 1);
+                    }
+                }
+            }
+            // Make the initial call to expand from the root.
+            console.log("about to start recursion");
+            expand(table.root, 0);
+            // Return the result.
+            return traversalResult;
+        }
     }
 
 
@@ -361,8 +437,14 @@ module TSC {
         closeScope(){
             //Checks for uninitialized vars and reports 
             //Checks for unused vars and reports  
-
-
+            
+            for (var key in this.current.symbols){
+                var value = this.current.symbols[key];
+                if (!value.used){
+                    //Warning 
+                    semanticWarnings.push("Warning: Unused variable : " + key + " on line: " + value.line);
+                }
+            }
             this.current = this.current.parent;
         }
 
@@ -370,7 +452,11 @@ module TSC {
             this.current.symbols[name] = new Symbol(type, line);
         }
 
+
+       
     }
+
+
 
     class ScopeNode {
         name: string;
@@ -387,13 +473,14 @@ module TSC {
     class Symbol {
         type: string;
         line: number;
-        initialized: boolean;
-        used: boolean;
+        initialized: boolean = false;
+        used: boolean = false;
 
         constructor(type:string, line:number){
             this.type = type;
             this.line = line;
         }
     }
+
 
 }
