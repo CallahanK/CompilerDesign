@@ -88,6 +88,11 @@ function btnCompile_click() {
                     putMessage("Displaying Symbol Table");
                     var symbolString = _Analyser.toString(symbolTable);
                     putMessage(symbolString);
+                    //Start Code Generation
+                    var instructionSet = _Generator.generate();
+                    //Completed Instruction Set Output 
+                    this.$('#myModal .modal-body').html('<pre>' + instructionSet + '</pre>');
+                    this.$("#myModal").modal({ backdrop: "static" });
                 }
                 else {
                     putMessage("Semantic Analysis ERROR");

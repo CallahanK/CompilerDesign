@@ -32,6 +32,9 @@ h1{
 	font-weight: bold;
 	text-align: center;
 }
+pre{
+	text-align: center;
+}
 #btnCompile{
 	width:200px;
 	text-align: center;

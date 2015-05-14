@@ -5,11 +5,40 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
     <link rel="stylesheet" href="dist/styles/bootstrap.min.css">
+    
 </head>
 <body>
     <h1>Callahan Compiler</h1>
     <hr>
     <p>. . . <em>a simple parser for a simple grammar</em>:</p>
+
+    <div class="container">
+      <!-- Trigger the modal with a button -->
+       <!--<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"> Show Code</button>-->
+
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" >&times;</button>
+              <h4 class="modal-title">Assembled 6502a Instructions:</h4>
+            </div>
+            <div class="modal-body" >
+              <p id="codeOutput">Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+
 
 	 <pre>
 
@@ -36,6 +65,9 @@
 -->
     <!-- Client-side code down here, per the YSlow advice. 
          (http://developer.yahoo.com/performance/rules.html#js_bottom) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
     <script type="text/javascript" src="dist/scripts/utils.js"></script>
     <script type="text/javascript" src="dist/scripts/token.js"></script>	
     <script type="text/javascript" src="dist/scripts/lexer.js"></script>
@@ -43,6 +75,7 @@
     <script type="text/javascript" src="dist/scripts/tree.js"></script>
     <script type="text/javascript" src="dist/scripts/cst.js"></script>	
     <script type="text/javascript" src="dist/scripts/semanticanalysis.js"></script>  
+    <script type="text/javascript" src="dist/scripts/codegen.js"></script>
     <script type="text/javascript" src="dist/scripts/globals.js"></script>	
     <script type="text/javascript" src="dist/scripts/main.js"></script>
 </body>

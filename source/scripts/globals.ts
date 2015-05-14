@@ -8,7 +8,7 @@ var _Lexer = TSC.Lexer;
 var _Parser = TSC.Parser;
 var _CST = TSC.ConcreteSyntaxTree;
 var _Analyser = TSC.SemanticAnalyser;
-
+var _Generator = TSC.CodeGeneration;
 
 //test 
 // Global variables
@@ -43,3 +43,16 @@ var _Analyser = TSC.SemanticAnalyser;
     var semanticMessages = [];
     var semanticWarnings = [];
     var semanticErrors = [];
+
+//Code Gen variables
+    var codeGenError = false;
+    var codeGenMessages = [];
+    var codeGenWarnings = [];
+    var codeGenErrors = [];
+    var staticDataTable = {};
+    var staticDataIndex = 0;
+
+    var jumpTable = {};
+    var assembledInstructions:String[] = [];
+    var currentStatic = 0;
+    var currentHeap = 255;

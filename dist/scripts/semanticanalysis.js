@@ -432,6 +432,7 @@ var TSC;
         }
         return ScopeNode;
     })();
+    TSC.ScopeNode = ScopeNode;
     var Symbol = (function () {
         function Symbol(type, line) {
             this.initialized = false;

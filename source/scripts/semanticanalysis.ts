@@ -458,7 +458,7 @@ module TSC {
 
 
 
-    class ScopeNode {
+    export class ScopeNode {
         name: string;
         parent: ScopeNode;
         children: ScopeNode[];
