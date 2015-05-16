@@ -202,7 +202,16 @@ module TSC {
                     }
 
                     if(tmpValue.varType == "int"){
+                        //LDX w/ 1 for sysCall
+                        addInstruction("A2");
+                        addInstruction("01");
 
+                        addInstruction("AC");
+
+                        addInstruction(tmpAddress);
+                        addInstruction("XX");
+
+                        addInstruction("FF");
                     }
 
 
