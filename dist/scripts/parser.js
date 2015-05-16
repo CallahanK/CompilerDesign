@@ -49,7 +49,7 @@ var TSC;
                         parseBlock();
                         break;
                     default:
-                        console.log('case assign');
+                        //console.log('case assign');
                         parseAssignmentStatement();
                 }
             }
@@ -60,13 +60,13 @@ var TSC;
                 matchByValue(")");
             }
             function parseAssignmentStatement() {
-                console.log('trying id');
+                //console.log('trying id');
                 parseId();
-                console.log('parsed id');
+                //console.log('parsed id');
                 matchByValue("=");
-                console.log('parse =');
+                //console.log('parse =');
                 parseExpr();
-                console.log('pasrsed ecpr');
+                //console.log('pasrsed ecpr');
             }
             function parseVarDecl() {
                 parseType();

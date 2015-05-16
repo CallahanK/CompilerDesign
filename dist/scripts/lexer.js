@@ -30,7 +30,7 @@ var TSC;
                             lexErrors.push("New line symbol found in string on line: " + (currentLine - 1));
                         }
                     case 'T_SPACE':
-                        console.log("SPACE");
+                        //console.log("SPACE");
                         if (inString) {
                             currentToken.kind = currentTokenType;
                             currentToken.line = currentLine;
@@ -69,7 +69,7 @@ var TSC;
                             lexError = true;
                             break;
                         }
-                        console.log("default");
+                        //console.log("default");
                         currentToken.kind = currentTokenType;
                         currentToken.line = currentLine;
                         currentToken.value = tmpSrc.substring(0, currentLength);
@@ -77,11 +77,11 @@ var TSC;
                 }
                 //Adds the new token to the tokenList array
                 if (srcTokenizing.length > 0) {
-                    console.log("adding token");
+                    //console.log("adding token");
                     return new Array(currentToken).concat(tokenize(srcTokenizing));
                 }
                 else {
-                    console.log("adding last token");
+                    //console.log("adding last token");
                     return new Array(currentToken);
                 }
             }

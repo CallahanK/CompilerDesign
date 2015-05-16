@@ -6,7 +6,7 @@ module TSC {
 
             //Checks for id in all accessable scopes
             function existsInScope(varName: string, scope: ScopeNode) {
-                console.log("checking in scope");
+                //console.log("checking in scope");
                 if (scope.name == "root") {
                     return false;
                 }
@@ -35,7 +35,7 @@ module TSC {
                 }
 
                 if (node.name == "+" && node.children[0].type == "digit") {
-                    isIntExpr(node.children[1]);
+                    return isIntExpr(node.children[1]);
                 } else {
                     return false;
                 }
@@ -164,7 +164,7 @@ module TSC {
                     return true;
                 } else {
                     //Error 
-                    semanticErrors.push("Error: bad boolean on line " + node.line);
+                    semanticErrors.push("Error: bad boolean expression on line " + node.line);
                     semanticError = true;
                     return false;
                 }
@@ -205,7 +205,7 @@ module TSC {
                 } //End Var Decl
 
                 if (node.name == "Assignment Statement") {
-                    console.log("Assignemnt statement");
+                    //console.log("Assignemnt statement");
                     var assignId = node.children[0].name;
                     var assignExpr = node.children[1].name;
                     
@@ -364,7 +364,6 @@ module TSC {
 
         //Return a string representation of the tree. 
         public static toString(table: SymbolTable) {
-            console.log("about to to string");
             // Initialize the result string.
             var traversalResult = "";
 
@@ -408,7 +407,6 @@ module TSC {
                 }
             }
             // Make the initial call to expand from the root.
-            console.log("about to start recursion");
             expand(table.root, 0);
             // Return the result.
             return traversalResult;

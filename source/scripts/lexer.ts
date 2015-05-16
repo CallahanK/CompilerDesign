@@ -39,7 +39,7 @@ module TSC {
                     //Checks if in a string, and only makes a space type
                     //token if we are in string mode
                     case 'T_SPACE':
-                        console.log("SPACE");
+                        //console.log("SPACE");
                         if(inString){
                             currentToken.kind = currentTokenType;
                             currentToken.line = currentLine;
@@ -79,7 +79,7 @@ module TSC {
                             lexError = true;
                             break;
                         }
-                        console.log("default");
+                        //console.log("default");
                         currentToken.kind = currentTokenType;
                         currentToken.line = currentLine;
                         currentToken.value = tmpSrc.substring(0, currentLength);
@@ -88,11 +88,11 @@ module TSC {
 
                 //Adds the new token to the tokenList array
                 if (srcTokenizing.length > 0) {
-                    console.log("adding token");
+                    //console.log("adding token");
                     return new Array(currentToken).concat(tokenize(srcTokenizing));
                 }
                 else {
-                    console.log("adding last token");
+                    //console.log("adding last token");
                     return new Array(currentToken);
                 }
 

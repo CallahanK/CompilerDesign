@@ -7,7 +7,7 @@ var TSC;
         SemanticAnalyser.analyse = function () {
             //Checks for id in all accessable scopes
             function existsInScope(varName, scope) {
-                console.log("checking in scope");
+                //console.log("checking in scope");
                 if (scope.name == "root") {
                     return false;
                 }
@@ -32,7 +32,7 @@ var TSC;
                     return true;
                 }
                 if (node.name == "+" && node.children[0].type == "digit") {
-                    isIntExpr(node.children[1]);
+                    return isIntExpr(node.children[1]);
                 }
                 else {
                     return false;
@@ -162,7 +162,7 @@ var TSC;
                 }
                 else {
                     //Error 
-                    semanticErrors.push("Error: bad boolean on line " + node.line);
+                    semanticErrors.push("Error: bad boolean expression on line " + node.line);
                     semanticError = true;
                     return false;
                 }
@@ -195,7 +195,7 @@ var TSC;
                     }
                 } //End Var Decl
                 if (node.name == "Assignment Statement") {
-                    console.log("Assignemnt statement");
+                    //console.log("Assignemnt statement");
                     var assignId = node.children[0].name;
                     var assignExpr = node.children[1].name;
                     //Checks all accessable scopes
@@ -343,7 +343,6 @@ var TSC;
         };
         //Return a string representation of the tree. 
         SemanticAnalyser.toString = function (table) {
-            console.log("about to to string");
             // Initialize the result string.
             var traversalResult = "";
             // Recursive function to handle the expansion of the nodes.
@@ -382,7 +381,6 @@ var TSC;
                 }
             }
             // Make the initial call to expand from the root.
-            console.log("about to start recursion");
             expand(table.root, 0);
             // Return the result.
             return traversalResult;

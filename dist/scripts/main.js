@@ -68,6 +68,7 @@ function btnCompile_click() {
                 putMessage("Building AST");
                 putMessage("AST Built");
                 putMessage("Building Symbol Table");
+                console.log(ast);
                 _Analyser.analyse();
                 if (!semanticError) {
                     putMessage("Symbol Table Built");

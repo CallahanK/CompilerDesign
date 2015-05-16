@@ -1,8 +1,3 @@
-/*
-var onDocumentLoad = function() {
-    TSOS.Control.hostInit();
-};
-*/
 var _Lexer = TSC.Lexer;
 var _Parser = TSC.Parser;
 var _CST = TSC.ConcreteSyntaxTree;
@@ -47,4 +42,6 @@ var staticDataIndex = 0;
 var jumpTable = {};
 var assembledInstructions = [];
 var currentStatic = 0;
-var currentHeap = 255;
+var currentHeap = 256;
+var currentScope = null;
+var currentScopeIndex = [0];
