@@ -172,6 +172,7 @@ module TSC {
                     parseBoolVal();
                 }
                 cst.returnToParent();
+                ast.returnToParent();
             }
 
             function parseId() {
@@ -238,10 +239,10 @@ module TSC {
             function parseBoolOp() {
                 cst.addBranchNode("Bool Operation");
                 if (nextToken().value == '==') {
-                    //addASTLeaf("equals");
+                    addASTLeaf("equals");
                     matchTerminal();
                 } else {
-                    //addASTLeaf("not equals");
+                    addASTLeaf("not equals");
                     matchTerminal();
                 }
                 cst.returnToParent();

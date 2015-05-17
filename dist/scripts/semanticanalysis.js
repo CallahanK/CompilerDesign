@@ -49,18 +49,18 @@ var TSC;
                             return false;
                         }
                         if (node.children[1].type == "id") {
-                            if (!existsInScope(node.children[1].name, symbolTable.current)) {
+                            if (!existsInScope(node.children[2].name, symbolTable.current)) {
                                 //Error
-                                semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope on line: " + node.children[1].line);
+                                semanticErrors.push("Error: Variable: " + node.children[2].name + " undeclared in scope on line: " + node.children[1].line);
                                 semanticError = true;
                                 return false;
                             }
-                            if (getSymbol(node.children[0].name, symbolTable.current).type == getSymbol(node.children[1].name, symbolTable.current).type) {
+                            if (getSymbol(node.children[0].name, symbolTable.current).type == getSymbol(node.children[2].name, symbolTable.current).type) {
                                 //Successful Check - No Error
                                 //node.children[0] is used 
                                 getSymbol(node.children[0].name, symbolTable.current).used = true;
                                 //node.children[1] is used
-                                getSymbol(node.children[1].name, symbolTable.current).used = true;
+                                getSymbol(node.children[2].name, symbolTable.current).used = true;
                                 return true;
                             }
                             else {
@@ -72,7 +72,7 @@ var TSC;
                             var compSymbol = getSymbol(node.children[0].name, symbolTable.current);
                             switch (compSymbol.type) {
                                 case 'int':
-                                    if (isIntExpr(node.children[1])) {
+                                    if (isIntExpr(node.children[2])) {
                                         return true;
                                     }
                                     else {
@@ -80,7 +80,7 @@ var TSC;
                                     }
                                     break;
                                 case 'string':
-                                    if (node.children[1].type == "string") {
+                                    if (node.children[2].type == "string") {
                                         return true;
                                     }
                                     else {
@@ -88,7 +88,7 @@ var TSC;
                                     }
                                     break;
                                 case 'boolean':
-                                    if (isBoolExpr(node.children[1])) {
+                                    if (isBoolExpr(node.children[2])) {
                                         return true;
                                     }
                                     else {
@@ -102,12 +102,12 @@ var TSC;
                     if (node.children[1].type == "id") {
                         if (!existsInScope(node.children[1].name, symbolTable.current)) {
                             //Error
-                            semanticErrors.push("Error: Variable: " + node.children[1].name + " undeclared in scope");
+                            semanticErrors.push("Error: Variable: " + node.children[2].name + " undeclared in scope");
                             semanticError = true;
                             return false;
                         }
                         else {
-                            var compSymbol = getSymbol(node.children[1].name, symbolTable.current);
+                            var compSymbol = getSymbol(node.children[2].name, symbolTable.current);
                             switch (compSymbol.type) {
                                 case 'int':
                                     if (isIntExpr(node.children[0])) {
@@ -138,19 +138,19 @@ var TSC;
                         }
                     }
                     if (isIntExpr(node.children[0])) {
-                        if (isIntExpr(node.children[1])) {
+                        if (isIntExpr(node.children[2])) {
                             return true;
                         }
                         return false;
                     }
                     if (node.children[0].type == "string") {
-                        if (node.children[1].type == "string") {
+                        if (node.children[2].type == "string") {
                             return true;
                         }
                         return false;
                     }
                     if (isBoolExpr(node.children[0])) {
-                        if (isBoolExpr(node.children[1])) {
+                        if (isBoolExpr(node.children[2])) {
                             return true;
                         }
                         return false;
@@ -167,7 +167,7 @@ var TSC;
                     return false;
                 }
             }
-            //Pre-order traversal
+            //Pre-order traversal 
             function buildSymbolTable(node) {
                 //Current node
                 if (node.name == "root") {
@@ -339,7 +339,7 @@ var TSC;
                     }
                 } //End While
             }
-            buildSymbolTable(ast.current);
+            buildSymbolTable(ast.root);
         };
         //Return a string representation of the tree. 
         SemanticAnalyser.toString = function (table) {

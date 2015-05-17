@@ -133,7 +133,7 @@ var TSC;
                 //Print int expr
                 if (tmpPrint.name == "+") {
                 }
-                //Print string expr 
+                //Print string expr
                 if (tmpPrint.type == "string") {
                     var tmpHeapAddress = addString(tmpPrint.name);
                     var tmpLoc = "T" + staticDataIndex;

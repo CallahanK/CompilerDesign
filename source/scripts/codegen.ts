@@ -221,7 +221,7 @@ module TSC {
 
                 }
 
-                //Print string expr 
+                //Print string expr
                 if(tmpPrint.type == "string"){
 
                     var tmpHeapAddress = addString(tmpPrint.name);
@@ -261,7 +261,13 @@ module TSC {
 
             function ifStatement(node: Node ) {
 
+
+
+
+
             }
+
+
 
             function backPatch() {
                 //Adds a final break instruction
