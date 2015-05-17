@@ -1,0 +1,38 @@
+{
+string b
+b="test string"
+print (b)
+}$
+
+{
+string a
+a="first"
+a="second"
+a="actual"
+print(a)
+}$
+
+{
+print("string one")
+print("string two")
+print("string expr")
+}$
+
+{
+int a 
+a = 2
+print(a)
+}$
+
+{
+int a
+a = 2+3+4+5
+print(a)
+}$
+
+{
+int a
+a= 2+3+4+5
+a = 2
+print(a)
+}$

@@ -32,6 +32,22 @@
         semanticMessages = [];
         semanticWarnings = [];
         semanticErrors = [];
+
+        //Code Gen variables
+        codeGenError = false;
+        codeGenMessages = [];
+        codeGenWarnings = [];
+        codeGenErrors = [];
+        staticDataTable = {};
+        staticDataIndex = 0;
+
+        jumpTable = {};
+        assembledInstructions = [];
+        currentStatic = 0;
+        currentHeap = 256;
+        currentScope = null;
+        currentScopeIndex = [0];
+
     } 
 
     function btnCompile_click() {        
