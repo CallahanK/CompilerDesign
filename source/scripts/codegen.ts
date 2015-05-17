@@ -221,6 +221,35 @@ module TSC {
 
                 }
 
+                //Print string expr 
+                if(tmpPrint.type == "string"){
+
+                    var tmpHeapAddress = addString(tmpPrint.name);
+                    var tmpLoc:string = "T" + staticDataIndex;
+
+                    staticDataTable[tmpLoc] = new staticData("", currentScope.name, staticDataIndex, "string");
+                    staticDataIndex++;
+
+                    addInstruction("A9");
+                    addInstruction(intToHex(tmpHeapAddress));
+                    addInstruction("8D");
+                    addInstruction(tmpLoc);
+                    addInstruction("XX");
+
+                    //LDX w/ 2 for sysCall
+                    addInstruction("A2");
+                    addInstruction("02");
+
+                    addInstruction("AC");
+
+                    addInstruction(tmpLoc);
+                    addInstruction("XX");
+
+                    addInstruction("FF");
+
+
+                }
+
 
 
             }
@@ -270,11 +299,11 @@ module TSC {
                 var intBuild = 0;
                 var currNode = node;
 
-                while(currNode.children.length > 2){
-                    intBuild += parseInt(node.children[0].name);
+                while(currNode.children.length > 1){
+                    intBuild = intBuild + parseInt(currNode.children[0].name);
                     currNode = currNode.children[1];
                 }
-                intBuild += parseInt(node.children[0].name);
+                intBuild = intBuild + parseInt(currNode.children[0].name);
                 console.log("int total" + intBuild);
                 return intBuild;
             }
@@ -316,7 +345,7 @@ module TSC {
                     assembledInstructions[currentHeap + newString.length] = "00 ";
                     return currentHeap;
                 }
-
+                return 0;
             }
 
             function openScope() {

@@ -91,9 +91,17 @@ function btnCompile_click() {
                     putMessage(symbolString);
                     //Start Code Generation
                     var instructionSet = _Generator.generate();
-                    //Completed Instruction Set Output 
-                    this.$('#myModal .modal-body').html('<pre>' + instructionSet + '</pre>');
-                    this.$("#myModal").modal({ backdrop: "static" });
+                    if (!codeGenError) {
+                        //Completed Instruction Set Output 
+                        this.$('#myModal .modal-body').html('<pre>' + instructionSet + '</pre>');
+                        this.$("#myModal").modal({ backdrop: "static" });
+                    }
+                    else {
+                        putMessage("Code Generation ERROR");
+                        for (var error in codeGenErrors) {
+                            putMessage(codeGenErrors[error]);
+                        }
+                    }
                 }
                 else {
                     putMessage("Semantic Analysis ERROR");

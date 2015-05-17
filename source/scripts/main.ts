@@ -108,10 +108,19 @@
                         //Start Code Generation
                         var instructionSet = _Generator.generate(); 
 
+                        if(!codeGenError){
+                            //Completed Instruction Set Output 
+                            this.$('#myModal .modal-body').html('<pre>' + instructionSet + '</pre>');
+                            this.$("#myModal").modal({ backdrop:"static"});
+                        } else {
+                            putMessage("Code Generation ERROR");
+                            for (var error in codeGenErrors) {
+                                putMessage(codeGenErrors[error]);
+                            }   
+                        }
 
-                        //Completed Instruction Set Output 
-                        this.$('#myModal .modal-body').html('<pre>' + instructionSet + '</pre>');
-                        this.$("#myModal").modal({ backdrop:"static"});
+
+                            
 
                     } else {
                         putMessage("Semantic Analysis ERROR");
